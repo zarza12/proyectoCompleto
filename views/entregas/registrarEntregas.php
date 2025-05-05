@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-include_once '/controllers/daoEntregas.php';
-include_once  '/models/Entregas.php';
+include_once '../../controllers/daoEntregas.php';
+include_once  '../../models/Entregas.php';
 
 if (isset($_POST['registrarEntrega']) && $_POST['registrarEntrega'] === 'registrarEntrega') {
 
