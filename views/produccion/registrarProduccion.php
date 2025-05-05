@@ -370,7 +370,7 @@ if (isset($_POST['registrarProduccion']) && $_POST['registrarProduccion'] === 'r
                 Complete todos los campos requeridos para registrar la producción diaria.
             </div>
             
-            <form id="formularioProduccion" method="POST" action="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/registrarProduccion.php">
+            <form id="formularioProduccion" method="POST" action="registrarProduccion.php">
                 <div class="seccion-formulario">
                     <h3 class="titulo-seccion">Información General</h3>
                     

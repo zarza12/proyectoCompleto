@@ -370,7 +370,7 @@ if (isset($_POST['registrarEntrega']) && $_POST['registrarEntrega'] === 'registr
                 Complete todos los campos requeridos para registrar la entrega de productos.
             </div>
             
-            <form id="formularioRegistrarEntrega"  method="POST" action="/dashboard/ProyectoMari/proyectoCompleto/views/entregas/registrarEntregas.php">
+            <form id="formularioRegistrarEntrega"  method="POST" action="registrarEntregas.php">
                 <div class="seccion-formulario">
                 <h3 class="titulo-seccion">Información del Producto</h3>
         

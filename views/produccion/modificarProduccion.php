@@ -257,7 +257,7 @@ $produccionesJSON = json_encode($produccionesJS);
                 <span class="id-registro" id="idRegistroMostrado">PROD-001</span>
             </div>
             <div class="detalles-item"><i class="fas fa-info-circle"></i><strong>Nota:</strong> Selecciona un registro de la tabla para modificar sus datos.</div>
-    <form id="formularioModificar" method="POST" action="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/modificarProduccion.php">
+    <form id="formularioModificar" method="POST" action="modificarProduccion.php">
         <input type="hidden" id="idRegistro" name="idRegistro" value="">
         <div class="form-grid">
         <div class="form-group">

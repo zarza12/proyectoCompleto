@@ -359,7 +359,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                 Complete todos los campos requeridos para registrar al nuevo personal.
             </div>
 
-            <form id="formularioPersonal" method="POST" action="/dashboard/ProyectoMari/proyectoCompleto/views/personal/registrarPersonal.php">
+            <form id="formularioPersonal" method="POST" action="registrarPersonal.php">
                 <div class="seccion-formulario">
                     <h3 class="titulo-seccion">Datos Personales</h3>
 

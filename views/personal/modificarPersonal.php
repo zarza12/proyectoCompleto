@@ -820,7 +820,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <strong>Nota:</strong> Selecciona un registro de la tabla para modificar sus datos. El ID del personal no puede ser modificado.
             </div>
             
-            <form id="modificarPersonalForm" method="POST" action="/dashboard/ProyectoMari/proyectoCompleto/views/personal/modificarPersonal.php">
+            <form id="modificarPersonalForm" method="POST" action="modificarPersonal.php">
                 <input type="hidden" id="idPersonal" name="idPersonal" value="">
                 
                 <!-- Datos Personales -->

@@ -1164,7 +1164,7 @@ $htmlListado = lisPer($listarPersonas);
                     
                     // Eliminar la fila de la tabla
                     document.getElementById(`fila-${idPersonalEliminar}`).remove();
-                    window.open('/dashboard/ProyectoMari/proyectoCompleto/views/personal/eliminarPersonal.php?idEliminar=' + IDelimiar);
+                    window.open('eliminarPersonal.php?idEliminar=' + IDelimiar);
                     
                     // Si estamos mostrando los detalles de este personal, cerrarlos
                     if (document.getElementById('idPersonaDetalle').textContent === idPersonalEliminar) {
