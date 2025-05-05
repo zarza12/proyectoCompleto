@@ -858,8 +858,8 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <i class="fas fa-briefcase campo-icono"></i>
                                 <select id="modificarPuesto" name="modificarPuesto" class="form-select" required>
                                     <option value="">Seleccione un puesto...</option>
-                                    <option value="Agronómo">Agrónomo</option>
-                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="agronomo">Agrónomo</option>
+                                    <option value="supervisor">Supervisor</option>
                                 </select>
                             </div>
                         </div>
