@@ -23,7 +23,7 @@ foreach ($listarPersonas as $persona) {
         'telefono' => $persona->getTelefonoCelular(),
         'telefonoEmergencia' => $persona->getTelefonoEmergencia(),
         'direccion' => $persona->getDireccion(),
-        'curp' => $persona->getCurp()
+        'curp' => $persona->setCrup()
     ];
    
 }
