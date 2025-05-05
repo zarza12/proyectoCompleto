@@ -130,20 +130,23 @@ class daoProduccion {
 
     try {
         $sql = "
-            SELECT * FROM produccion WHERE id != 1;
+            SELECT * FROM produccion WHERE id != 1
         ";
         $result = $conexion->query($sql);
 
         while ($row = $result->fetch_assoc()) {
-            $listaProducciones[] = new Produccion(
-                $row['id'],        // id
-                $row['sectorProduccion'],     // sectorProduccion
-                $row['fechaProduccion'],      // fechaProduccion
-                $row['calidadExportacion'],   // calidadExportacion
-                $row['calidadNacional'],      // calidadNacional
-                $row['calidadDesecho'],       // calidadDesecho
-                $row['subTotal']              // subTotal
-            );
+            if($row['id']!='1'){
+                $listaProducciones[] = new Produccion(
+                    $row['id'],        // id
+                    $row['sectorProduccion'],     // sectorProduccion
+                    $row['fechaProduccion'],      // fechaProduccion
+                    $row['calidadExportacion'],   // calidadExportacion
+                    $row['calidadNacional'],      // calidadNacional
+                    $row['calidadDesecho'],       // calidadDesecho
+                    $row['subTotal']              // subTotal
+                );
+            }
+            
         }
 
         return $listaProducciones;
