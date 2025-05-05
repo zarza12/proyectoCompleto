@@ -761,17 +761,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <tbody>
                 <?php echo $htmlListado; ?>
                     <!-- Estas filas serían generadas dinámicamente desde la base de datos -->
-                    <tr onclick="seleccionarRegistro('P004')" id="fila-P004">
-                        <td>P004</td>
-                        <td>Pedro González Torres</td>
-                        <td><span class="estado estado-supervisor">Supervisor</span></td>
-                        <td>03/12/2022</td>
-                        <td>934567890</td>
-                        <td>
-                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P004')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
         </div>
