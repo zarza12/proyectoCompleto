@@ -30,6 +30,7 @@ class Personas {
         $this->telefono_emergencia = $telefono_emergencia;
         $this->direccion = $direccion;
         $this->activo = $activo;
+        $this->crup = $crup;
     }
     
     // Getters
