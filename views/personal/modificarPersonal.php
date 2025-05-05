@@ -11,7 +11,7 @@ $listarPersonas = $daoPersona->listarPersonal();
 // Crear un array para los datos de JavaScript
 $personasJS = [];
 foreach ($listarPersonas as $persona) {
-    $puesto2=$persona->getPuesto();
+    $puesto=$persona->getPuesto();
     if($puesto==='Agrónomo'){
         $puesto='agronomo';
     }else{
