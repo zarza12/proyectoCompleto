@@ -31,7 +31,12 @@ if (isset($_POST['registrarProduccion']) && $_POST['registrarProduccion'] === 'r
     
 
     if ($registo) {
-        mostrarMensaje("Registro exitoso.");
+        echo "
+        <script>
+            alert('Registro exitoso');
+            window.location.href = 'registrarProduccion.php';
+        </script>";
+        
     } else {
         mostrarMensaje("Error al insertar el registro.");
        

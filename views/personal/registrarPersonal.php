@@ -62,7 +62,18 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     
 
     if ($registo) {
-        mostrarMensaje("Registro exitoso.");
+        echo "
+        <script>
+           enviarGmail(
+            " . json_encode($nombreCompleto) . ",
+            " . json_encode($IDpersona) . ",
+            " . json_encode($IDpersona) . ",
+            " . json_encode($email) . "
+           );
+            alert('Registro exitoso');
+            window.location.href = 'registrarPersonal.php';
+        </script>";
+        
     } else {
         mostrarMensaje("Error al insertar el registro.");
        
@@ -76,6 +87,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Personal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -487,6 +499,43 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     </div>
 
     <script>
+
+            function enviarGmail(nombreUsuario, contraseña, correoDestino) {
+                emailjs.init("cPH55wjfjOhIesJ-q");
+
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <h2 style="color: #4CAF50;">¡Bienvenido a nuestro equipo!</h2>
+                        <p>Estimado/a <strong>${nombreUsuario}</strong>,</p>
+                        <p>
+                            Nos complace darle la bienvenida a nuestro equipo. Esperamos que se encuentre muy bien.
+                            A continuación, le compartimos sus credenciales de acceso:
+                        </p>
+                        <ul style="background: #f9f9f9; padding: 10px 15px; border-radius: 5px; list-style: none;">
+                            <li><strong>Usuario:</strong> ${correoDestino}</li>
+                            <li><strong>Contraseña:</strong> ${contraseña}</li>
+                        </ul>
+                        <p>
+                            Por favor, mantenga esta información confidencial.
+                        </p>
+                        <p>Saludos cordiales,<br><strong>Equipo de Soporte</strong></p>
+                    </div>
+                `;
+
+                const templateParams = {
+                    to_email: correoDestino,
+                    html_body: htmlContent
+                };
+
+                try {
+                    emailjs.send('service_esxf7ge', 'template_a9x4ta8', templateParams);
+                    alert('✅ Correo enviado');
+                } catch (err) {
+                    console.error(err);
+                    alert('❌ Error enviando correo');
+                }
+            }
+
     document.addEventListener('DOMContentLoaded', function() {
         const fechaActual = new Date().toISOString().split('T')[0];
         document.getElementById('fechaIngreso').value = fechaActual;

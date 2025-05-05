@@ -93,10 +93,10 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
     $registo = $daoPersona->modificarPersona($persona);
 
     if ($registo) {
-        echo "<script>alert('Modificado exitoso.'); window.location.href = '/dashboard/ProyectoMari/proyectoCompleto/views/personal/modificarPersonal.php';</script>";
+        echo "<script>alert('Modificado exitoso.'); window.location.href = 'modificarPersonal.php';</script>";
         exit;
     } else {
-        echo "<script>alert('Error al modificar el registro.'); window.location.href = '/dashboard/ProyectoMari/proyectoCompleto/views/personal/modificarPersonal.php';</script>";
+        echo "<script>alert('Error al modificar el registro.'); window.location.href = 'modificarPersonal.php';</script>";
         exit;
     }
    

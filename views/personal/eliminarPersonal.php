@@ -10,7 +10,12 @@ if (isset($_GET['idEliminar'])) {
     $daoPersona = new daoPersonas();
     $Elimino = $daoPersona->eliminarPersona($id);
     if($Elimino){
-        mostrarMensaje('Se elimino correcta mente');
+        echo "
+        <script>
+            alert('Registro elimino');
+            window.location.href = 'eliminarPersonal.php';
+        </script>";
+        
     }else{
         mostrarMensaje('No se puedo eliminar');
     }
