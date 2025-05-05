@@ -31,6 +31,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     $nombreCompleto = $_POST['nombreCompleto'];
     $fechaNacimiento = $_POST['fechaNacimiento'];
     $genero = $_POST['genero'];
+    $curp = $_POST['curp']; // Nueva línea para capturar CURP
 
     // Información Laboral
     $puesto = $_POST['puesto'];
@@ -46,7 +47,8 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
         $IDpersona,
         $nombreCompleto, 
         $fechaNacimiento, 
-        $genero, 
+        $genero,
+        $curp, // Nueva línea para incluir CURP en el objeto
         $puesto, 
         $fechaIngreso, 
         $email, 
@@ -327,6 +329,46 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
         color: red;
     }
 
+    /* Estilo para el mensaje de error de validación CURP */
+    .error-mensaje {
+        color: var(--color-error);
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    /* Tooltip para ayudar con el formato CURP */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 5px;
+        color: var(--color-primario);
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 250px;
+        background-color: #555;
+        color: #fff;
+        text-align: left;
+        border-radius: 6px;
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -125px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
     @media (max-width: 768px) {
         .contenedor-principal {
             margin: 10px auto;
@@ -362,7 +404,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                 <h1 class="titulo-pagina">Registro de Personal</h1>
                 <p class="subtitulo">Ingrese los datos del nuevo empleado</p>
             </div>
-            <button class="boton-atras" title="Volver atrás">
+            <button class="boton-atras" title="Volver atrás" onclick="window.history.back()">
                 <i class="fas fa-arrow-left"></i>
             </button>
         </div>
@@ -396,6 +438,26 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                         </div>
                     </div>
 
+                    <!-- Nuevo campo CURP -->
+                    <div class="grupo-formulario">
+                        <label class="etiqueta" for="curp">CURP <span class="requerido">*</span>
+                            <div class="tooltip"><i class="fas fa-question-circle"></i>
+                                <span class="tooltiptext">Clave Única de Registro de Población (CURP). 
+                                    Formato: 18 caracteres alfanuméricos.
+                                    Ejemplo: ABCD123456HDFXYZ12</span>
+                            </div>
+                        </label>
+                        <div class="campo-con-icono">
+                            <i class="fas fa-fingerprint icono-campo"></i>
+                            <input type="text" id="curp" name="curp" class="campo-entrada" 
+                                placeholder="Ingrese la CURP" maxlength="18" required 
+                                pattern="^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z][0-9]$">
+                        </div>
+                        <div id="curpError" class="error-mensaje">
+                            La CURP debe tener 18 caracteres en formato válido
+                        </div>
+                    </div>
+
                     <div class="fila-formulario">
                         <div class="grupo-formulario">
                             <label class="etiqueta" for="fechaNacimiento">Fecha de Nacimiento <span
@@ -407,10 +469,10 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                         </div>
 
                         <div class="grupo-formulario">
-                            <label class="etiqueta" for="genero">Género</label>
+                            <label class="etiqueta" for="genero">Género <span class="requerido">*</span></label>
                             <div class="campo-con-icono">
                                 <i class="fas fa-venus-mars icono-campo"></i>
-                                <select id="genero" name="genero" class="campo-entrada campo-select">
+                                <select id="genero" name="genero" class="campo-entrada campo-select" required>
                                     <option value="">Seleccione...</option>
                                     <option value="masculino">Masculino</option>
                                     <option value="femenino">Femenino</option>
@@ -432,6 +494,8 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                                 <option value="">Seleccione un puesto...</option>
                                 <option value="agronomo">Agrónomo</option>
                                 <option value="supervisor">Supervisor</option>
+                                <option value="administrativo">Administrativo</option>
+                                <option value="tecnico">Técnico</option>
                             </select>
                         </div>
                     </div>
@@ -450,10 +514,10 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                     <h3 class="titulo-seccion">Datos de Contacto</h3>
 
                     <div class="grupo-formulario">
-                        <label class="etiqueta" for="email">Correo Electrónico</label>
+                        <label class="etiqueta" for="email">Correo Electrónico <span class="requerido">*</span></label>
                         <div class="campo-con-icono">
                             <i class="fas fa-envelope icono-campo"></i>
-                            <input type="email" id="email" name="email" class="campo-entrada" placeholder="ejemplo@correo.com">
+                            <input type="email" id="email" name="email" class="campo-entrada" placeholder="ejemplo@correo.com" required>
                         </div>
                     </div>
 
@@ -479,11 +543,11 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                     </div>
 
                     <div class="grupo-formulario">
-                        <label class="etiqueta" for="direccion">Dirección</label>
+                        <label class="etiqueta" for="direccion">Dirección <span class="requerido">*</span></label>
                         <div class="campo-con-icono">
                             <i class="fas fa-home icono-campo"></i>
                             <textarea id="direccion" name="direccion" class="campo-entrada campo-textarea" rows="2"
-                                placeholder="Ingrese la dirección completa"></textarea>
+                                placeholder="Ingrese la dirección completa" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -501,7 +565,6 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     </div>
 
     <script>
-
             function enviarGmail(nombreUsuario, contraseña, correoDestino, puesto) {
                 emailjs.init("cPH55wjfjOhIesJ-q");
 
@@ -541,6 +604,38 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     document.addEventListener('DOMContentLoaded', function() {
         const fechaActual = new Date().toISOString().split('T')[0];
         document.getElementById('fechaIngreso').value = fechaActual;
+        
+        // Establecer fecha máxima para fecha de nacimiento (18 años atrás)
+        const fechaMaxNacimiento = new Date();
+        fechaMaxNacimiento.setFullYear(fechaMaxNacimiento.getFullYear() - 18);
+        document.getElementById('fechaNacimiento').max = fechaMaxNacimiento.toISOString().split('T')[0];
+
+        // Validación del campo CURP
+        const curpInput = document.getElementById('curp');
+        const curpError = document.getElementById('curpError');
+        
+        curpInput.addEventListener('input', function() {
+            // Convertir a mayúsculas automáticamente
+            this.value = this.value.toUpperCase();
+            
+            // Validar formato CURP
+            const curpRegex = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z][0-9]$/;
+            if (this.value && !curpRegex.test(this.value)) {
+                curpError.style.display = 'block';
+                this.setCustomValidity('Formato de CURP inválido');
+            } else {
+                curpError.style.display = 'none';
+                this.setCustomValidity('');
+            }
+        });
+
+        // Validación de teléfonos (solo números)
+        const telefonoInputs = document.querySelectorAll('#telefono, #telefonoEmergencia');
+        telefonoInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
 
         // Evento para el botón cancelar
         document.getElementById('cancelarRegistro').addEventListener('click', function() {
@@ -549,6 +644,26 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                 document.getElementById('fechaIngreso').value = fechaActual;
                 // Aquí podrías añadir redirección a otra página si es necesario
                 // window.location.href = 'pagina_anterior.php';
+            }
+        });
+
+        // Validación del formulario completo antes de enviar
+        document.getElementById('formularioPersonal').addEventListener('submit', function(event) {
+            let isValid = true;
+            const required = this.querySelectorAll('[required]');
+            
+            required.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('campo-error');
+                } else {
+                    field.classList.remove('campo-error');
+                }
+            });
+            
+            if (!isValid) {
+                event.preventDefault();
+                alert('Por favor, complete todos los campos requeridos correctamente.');
             }
         });
     });

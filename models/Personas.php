@@ -13,9 +13,10 @@ class Personas {
     private $telefono_emergencia;
     private $direccion;
     private $activo;
+    private $crup;
     
     // Constructor
-    public function __construct($id = '', $nombre_completo = '', $fecha_nacimiento = '', $genero = '', 
+    public function __construct($id = '', $nombre_completo = '', $fecha_nacimiento = '', $genero = '', $crup = '',
                                $puesto = '', $fecha_ingreso = '', $correo_electronico = '', 
                                $telefono_celular = '', $telefono_emergencia = '', $direccion = '', $activo = true) {
         $this->id = $id;
@@ -123,6 +124,18 @@ class Personas {
         $this->activo = $activo;
     }
     
+
+
+    //------------------------------------------------
+
+    public function getCurp() {
+        return $this->crup;
+    }
+    
+    // Setters
+    public function setCrup($curp) {
+        $this->curp = $curp;
+    }
   
 }
 ?>

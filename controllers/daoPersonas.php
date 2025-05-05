@@ -21,7 +21,7 @@ class daoPersonas {
         try {
             $sql = "INSERT INTO personal (idPer, nombrePer, fechaNacimientoPer, generoPer, 
                                           puestoPer, fecha_ingreso, correoPer, telefonoPer, 
-                                          telefonoEmergencia, direccion, activo) 
+                                          telefonoEmergencia, direccion, activo, curp) 
                     VALUES (
                         '{$persona->getId()}',
                         '{$persona->getNombreCompleto()}',
@@ -33,7 +33,8 @@ class daoPersonas {
                         '{$persona->getTelefonoCelular()}',
                         '{$persona->getTelefonoEmergencia()}',
                         '{$persona->getDireccion()}',
-                        '{$persona->getActivo()}'
+                        '{$persona->getActivo()}',
+                        '{$persona->getCurp()}'
                     )";
     
             $resultado = $conexion->query($sql);
