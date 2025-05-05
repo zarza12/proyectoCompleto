@@ -324,7 +324,18 @@ $usuariosLoginJSON = json_encode($usuariosLoginJS);
 
             if (usuario) {
                 if (usuario.puesto === 'agronomo') {
-                    window.location.href = '#';
+                    fetch('session.php', {
+                    method: 'POST', // 1️⃣ Enviamos una solicitud POST
+                    headers: {
+                            'Content-Type': 'application/json' // 2️⃣ Indicamos que el cuerpo será JSON
+                    },
+                        body: JSON.stringify({ nombre: usuario.nombre }) // 3️⃣ Enviamos el nombre como JSON
+                    })
+                    .then(res => res.text()) // 4️⃣ Cuando el servidor responde, capturamos su respuesta
+                    .then(() => {
+                        window.location.href = 'menuAgronomo.php'; // 5️⃣ Redirigimos al usuario después de guardar en sesión
+                    });
+                   
                 } else if (usuario.puesto === 'supervisor') {
                     fetch('session.php', {
                     method: 'POST', // 1️⃣ Enviamos una solicitud POST

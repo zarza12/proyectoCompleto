@@ -558,26 +558,26 @@ $avatar = substr($nombre, 0, 1);
                     </div>
                     <div class="subcategorias" id="produccion-menu">
                         <li class="elementoMenu">
-                            <a href="/views/produccion/registrarProduccion.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/registrarProduccion.php">
                                     
                                 <label class="icono">➕</label>
                                 <label class="menuTexto">Registrar Producción</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/produccion/modificarProduccion.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/modificarProduccion.php">
                                 <label class="icono">✏️</label>
                                 <label class="menuTexto">Modificar Producción</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/produccion/eliminarProduccion.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/eliminarProduccion.php">
                                 <label class="icono">🗑️</label>
                                 <label class="menuTexto">Eliminar Producción</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/produccion/historialProduccion.php" >
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/produccion/historialProduccion.php" >
                                 <label class="icono">📋</label>
                                 <label class="menuTexto">Historial de Producción</label>
                             </a>
@@ -586,7 +586,7 @@ $avatar = substr($nombre, 0, 1);
                 </div>
 
                 <li class="elementoMenu">
-                            <a href="/views/inventario.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/inventario.php">
                                 <label class="icono">📋</label>
                                 <label class="menuTexto">Inventario</label>
                             </a>
@@ -601,25 +601,25 @@ $avatar = substr($nombre, 0, 1);
                     </div>
                     <div class="subcategorias" id="entregas-menu">
                         <li class="elementoMenu">
-                            <a href="/views/entregas/registrarEntregas.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/entregas/registrarEntregas.php">
                                 <label class="icono">➕</label>
                                 <label class="menuTexto">Registrar Entrega</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/entregas/modificarEntregas.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/entregas/modificarEntregas.php">
                                 <label class="icono">✏️</label>
                                 <label class="menuTexto">Modificar Entrega</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/entregas/eliminarEntregas.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/entregas/eliminarEntregas.php">
                                 <label class="icono">🗑️</label>
                                 <label class="menuTexto">Eliminar Entrega</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/entregas/historialEntregas.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/entregas/historialEntregas.php">
                                 <label class="icono">📊</label>
                                 <label class="menuTexto">Historial de Entregas</label>
                             </a>
@@ -636,19 +636,19 @@ $avatar = substr($nombre, 0, 1);
                     </div>
                     <div class="subcategorias" id="tratamientos-menu">
                         <li class="elementoMenu">
-                            <a href="/views/tratamientos/registrarTratamiento.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/tratamientos/registrarTratamiento.php">
                                 <label class="icono">➕</label>
                                 <label class="menuTexto">Registrar Receta</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/tratamientos/modificarTratamiento.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/tratamientos/modificarTratamiento.php">
                                 <label class="icono">✏️</label>
                                 <label class="menuTexto">Modificar Receta</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/tratamientos/historialTratamiento.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/tratamientos/historialTratamiento.php">
                                 <label class="icono">📚</label>
                                 <label class="menuTexto">Historial</label>
                             </a>
@@ -665,25 +665,25 @@ $avatar = substr($nombre, 0, 1);
                     </div>
                     <div class="subcategorias" id="personal-menu">
                         <li class="elementoMenu">
-                            <a href="/views/personal/registrarPersonal.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/personal/registrarPersonal.php">
                                 <label class="icono">➕</label>
                                 <label class="menuTexto">Registrar Personal</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/personal/modificarPersonal.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/personal/modificarPersonal.php">
                                 <label class="icono">✏️</label>
                                 <label class="menuTexto">Modificar Personal</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/personal/listarPersonal.php" >
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/personal/listarPersonal.php" >
                                 <label class="icono">📋</label>
                                 <label class="menuTexto">Listar Personal</label>
                             </a>
                         </li>
                         <li class="elementoMenu">
-                            <a href="/views/personal/eliminarPersonal.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/personal/eliminarPersonal.php">
                                 <label class="icono">🗑️</label>
                                 <label class="menuTexto">Eliminar Personal</label>
                             </a>
@@ -692,7 +692,7 @@ $avatar = substr($nombre, 0, 1);
                 </div>
 
                 <li class="elementoMenu">
-                            <a href="/views/ventasRealisadas.php">
+                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/ventasRealisadas.php">
                                 <label class="icono">📋</label>
                                 <label class="menuTexto">Ventas Realizadas</label>
                             </a>
