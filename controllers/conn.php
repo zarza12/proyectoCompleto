@@ -1,15 +1,13 @@
 <?php
 function getConnection() {
-    $host     = 'maglev.proxy.rlwy.net';
-    $port     = 28395;
-    $user     = 'root';
-    $pass     = 'yMvJslMyoIddmvatOcshpMmmxxoklObn';
-    $database = 'railway';
+    $host     = getenv('DB_HOST');
+    $port     = getenv('DB_PORT');
+    $user     = getenv('DB_USER');
+    $pass     = getenv('DB_PASS');
+    $database = getenv('DB_NAME');
 
-    // Crear conexión especificando el puerto
-    $conn = mysqli_connect($host, $user, $pass, $database, $port);
+    $conn = mysqli_connect($host, $user, $pass, $database, (int)$port);
 
-    // Verificar conexión
     if (!$conn) {
         die("Conexión fallida: " . mysqli_connect_error());
     }
