@@ -11,13 +11,19 @@ $listarPersonas = $daoPersona->listarPersonal();
 // Crear un array para los datos de JavaScript
 $personasJS = [];
 foreach ($listarPersonas as $persona) {
+    $puesto=$persona->getPuesto();
+    if($puesto=='Agrónomo'){
+        $puesto='agronomo';
+    }else{
+        $puesto='supervisor';
+    }
     $personasJS[] = [
         'id' => $persona->getId(),
         'nombre' => $persona->getNombreCompleto(),
         'dni' => $persona->getId(), // Asumiendo que el ID es el DNI
         'fechaNacimiento' => $persona->getFechaNacimiento(),
         'genero' => $persona->getGenero(),
-        'puesto' => $persona->getPuesto(),
+        'puesto' => $puesto,
         'fechaIngreso' => $persona->getFechaIngreso(),
         'email' => $persona->getCorreoElectronico(),
         'telefono' => $persona->getTelefonoCelular(),
@@ -724,7 +730,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <div class="filtro">
                     <select id="filtroPuesto">
                         <option value="">Todos los puestos</option>
-                        <option value="agrónomo">Agrónomo</option>
+                        <option value="agronomo">Agrónomo</option>
                         <option value="supervisor">Supervisor</option>
                     </select>
                 </div>
