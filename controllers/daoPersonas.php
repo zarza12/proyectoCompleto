@@ -62,6 +62,7 @@ class daoPersonas {
                     telefonoPer = '{$persona->getTelefonoCelular()}',
                     telefonoEmergencia = '{$persona->getTelefonoEmergencia()}',
                     direccion = '{$persona->getDireccion()}'
+                    curp = '{$persona->getCurp()}'
                     WHERE idPer = '{$persona->getId()}'";
     
             $resultado = $conexion->query($sql);
@@ -108,7 +109,7 @@ class daoPersonas {
                     $persona['idPer'], $persona['nombrePer'], $persona['fechaNacimientoPer'],
                     $persona['generoPer'], $persona['puestoPer'], $persona['fecha_ingreso'],
                     $persona['correoPer'], $persona['telefonoPer'], $persona['telefonoEmergencia'],
-                    $persona['direccion'], $persona['activo']
+                    $persona['direccion'], $persona['activo'], $persona['curp']
                 );
             }
     

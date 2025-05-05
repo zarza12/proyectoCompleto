@@ -22,7 +22,8 @@ foreach ($listarPersonas as $persona) {
         'email' => $persona->getCorreoElectronico(),
         'telefono' => $persona->getTelefonoCelular(),
         'telefonoEmergencia' => $persona->getTelefonoEmergencia(),
-        'direccion' => $persona->getDireccion()
+        'direccion' => $persona->getDireccion(),
+        'curp' => $persona->getCurp()
     ];
    
 }
@@ -75,12 +76,14 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
     $modificarTelefono = $_POST['modificarTelefono'];
     $modificarTelefonoEmergencia = $_POST['modificarTelefonoEmergencia'];
     $modificarDireccion = $_POST['modificarDireccion'];
+    $modificarCurp = $_POST['modificarCurp'];
 
     $persona = new Personas(
         $idPersonal, // id de la persona a modificar
         $modificarNombreCompleto, 
         $modificarFechaNacimiento, 
-        $modificarGenero, 
+        $modificarGenero,
+        $modificarCurp, 
         $modificarPuesto, 
         $modificarFechaIngreso, 
         $modificarEmail, 
@@ -822,6 +825,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
             
             <form id="modificarPersonalForm" method="POST" action="modificarPersonal.php">
                 <input type="hidden" id="idPersonal" name="idPersonal" value="">
+                <input type="hidden" name="modificarPersonal" value="modificarPersonal">
                 
                 <!-- Datos Personales -->
                 <div class="form-section">
@@ -838,6 +842,13 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                         <div class="campo-contenedor">
                             <i class="fas fa-id-card campo-icono"></i>
                             <input type="text" id="modificarDni" name="modificarDni" class="form-input" required pattern="[0-9]{8}" placeholder="Ingrese el ID" maxlength="8" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CURP</label>
+                        <div class="campo-contenedor">
+                            <i class="fas fa-id-card campo-icono"></i>
+                            <input type="text" id="modificarCurp" name="modificarCurp" class="form-input" placeholder="Ingrese la CURP">
                         </div>
                     </div>
                     <div class="form-row">
@@ -926,7 +937,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <!-- Botones de acción -->
                 <div class="botones-form">
                     <button type="button" class="btn btn-secundario" onclick="cancelarEdicion()"><i class="fas fa-times"></i> Cancelar</button>
-                    <button type="submit" id="modificarPersonal"  value="modificarPersonal" name="modificarPersonal" class="btn btn-primario" ><i class="fas fa-save"></i> Guardar Cambios</button>
+                    <button type="submit" class="btn btn-primario"><i class="fas fa-save"></i> Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -970,6 +981,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 // Llenar el formulario con los datos
                 document.getElementById('modificarNombreCompleto').value = personal.nombre;
                 document.getElementById('modificarDni').value = personal.dni;
+                document.getElementById('modificarCurp').value = personal.curp;
                 document.getElementById('modificarFechaNacimiento').value = personal.fechaNacimiento;
                 document.getElementById('modificarGenero').value = personal.genero;
                 console.log(personal.genero);
@@ -991,8 +1003,6 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 fila.classList.remove('fila-activa');
             });
         }
-        
-        
         
         // Inicializar búsqueda
         document.getElementById('buscarPersonal').addEventListener('input', function(e) {
