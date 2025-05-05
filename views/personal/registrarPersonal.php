@@ -64,14 +64,16 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     if ($registo) {
         echo "
         <script>
-           enviarGmail(
-            " . json_encode($nombreCompleto) . ",
-            " . json_encode($IDpersona) . ",
-            " . json_encode($email) . ",
-            " . json_encode($puesto) . "
-           );
-            alert('Registro exitoso');
-            window.location.href = 'registrarPersonal.php';
+            window.addEventListener('DOMContentLoaded', function() {
+                enviarGmail(
+                    " . json_encode($nombreCompleto) . ",
+                    " . json_encode($IDpersona) . ",
+                    " . json_encode($email) . ",
+                    " . json_encode($puesto) . "
+                );
+                alert('Registro exitoso');
+                window.location.href = 'registrarPersonal.php';
+            });
         </script>";
         
     } else {
