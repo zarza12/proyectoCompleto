@@ -78,7 +78,7 @@ class daoInventario {
     public function modificarInventarioPorProduccion(Inventario $inventario) {
         $conexion = getConnection();
         try {
-            $sql = "UPDATE Inventario SET 
+            $sql = "UPDATE inventario SET 
                     totalDesecho = '{$inventario->getTotalDesecho()}',
                     totalNacional = '{$inventario->getTotalNacional()}',
                     totalExportacion = '{$inventario->getTotalExportacion()}',
@@ -101,7 +101,7 @@ class daoInventario {
     public function modificarInventarioPorEntrega(Inventario $inventario) {
         $conexion = getConnection();
         try {
-            $sql = "UPDATE Inventario SET 
+            $sql = "UPDATE inventario SET 
                     totalDesecho = '{$inventario->getTotalDesecho()}',
                     totalNacional = '{$inventario->getTotalNacional()}',
                     totalExportacion = '{$inventario->getTotalExportacion()}',
@@ -128,7 +128,7 @@ class daoInventario {
     public function eliminarInventarioPorProduccion($idProduccion) {
         $conexion = getConnection();
         try {
-            $sql = "DELETE FROM Inventario 
+            $sql = "DELETE FROM inventario 
                     WHERE idProduccion = '{$idProduccion}'";
     
             $resultado = $conexion->query($sql);
@@ -145,7 +145,7 @@ class daoInventario {
         $listaTotales = [];
     
         try {
-            $totales = $conexion->query("SELECT idInventario, totalCajas, totalDesecho, totalNacional, totalExportacion, fecha FROM Inventario");
+            $totales = $conexion->query("SELECT idInventario, totalCajas, totalDesecho, totalNacional, totalExportacion, fecha FROM inventario");
     
             while ($total = $totales->fetch_assoc()) {
                 $listaTotales[] = [
@@ -170,7 +170,7 @@ class daoInventario {
         $listaVentas = [];
     
         try {
-            $ventas = $conexion->query("SELECT idInventario, ventaDesecho, ventaNacional, ventaExportacion, fecha FROM Inventario");
+            $ventas = $conexion->query("SELECT idInventario, ventaDesecho, ventaNacional, ventaExportacion, fecha FROM inventario");
     
             while ($venta = $ventas->fetch_assoc()) {
                 $listaVentas[] = [

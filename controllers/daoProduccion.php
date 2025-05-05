@@ -101,7 +101,7 @@ class daoProduccion {
         $conexion = getConnection();
         try {
             // Iniciar transacción
-         //   $conexion->begin_transaction();
+            $conexion->begin_transaction();
     
           // Registrar en inventario
           $daoInventario = new daoInventario();
@@ -112,7 +112,7 @@ class daoProduccion {
                       WHERE id = {$idProduccion}";
           $conexion->query($sqlProd);
             // Confirmar cambios
-           // $conexion->commit();
+            $conexion->commit();
             return true;
     
         } catch (mysqli_sql_exception $e) {
