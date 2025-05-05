@@ -50,7 +50,7 @@ function lisPer($listarPersonas) {
         $html .= '<tr onclick="seleccionarRegistro(\'' . $persona->getId() . '\')" id="fila-' . $persona->getId() . '">';
         $html .= '<td>' . $persona->getId() . '</td>';
         $html .= '<td>' . $persona->getNombreCompleto() . '</td>'; 
-        $html .= '<td><span class="estado estado-' . $claseEstado . '">' . $persona->getPuesto() . '</span></td>';
+        $html .= '<td><span class="estado estado-' . $claseEstado . '">' . $puesto . '</span></td>';
         $html .= '<td>' . $persona->getFechaIngreso() . '</td>';
         $html .= '<td>' . $persona->getTelefonoCelular() . '</td>'; 
         $html .= '<td>
