@@ -1,8 +1,8 @@
 <?php
-include_once  '/controllers/conn.php';
-include_once  '/models/Entregas.php';
-include_once  '/controllers/daoInventario.php';
-include_once  '/models/Inventario.php';
+include_once  'controllers/conn.php';
+include_once  'models/Entregas.php';
+include_once  'controllers/daoInventario.php';
+include_once  'models/Inventario.php';
 
 class daoEntregas {
 
