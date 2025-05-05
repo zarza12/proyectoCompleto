@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>hola mundo</h1>
-</body>
-</html>
+<?php
+// Redirige a otra página
+header("Location: ./views/index.php");
+exit(); // Siempre coloca exit después de header
+?>
