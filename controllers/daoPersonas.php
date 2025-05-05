@@ -107,9 +107,9 @@ class daoPersonas {
             while ($persona = $personas->fetch_assoc()) {
                 $listaPersonas[] = new Personas(
                     $persona['idPer'], $persona['nombrePer'], $persona['fechaNacimientoPer'],
-                    $persona['generoPer'], $persona['puestoPer'], $persona['fecha_ingreso'],
+                    $persona['generoPer'], $persona['curp'], $persona['puestoPer'], $persona['fecha_ingreso'],
                     $persona['correoPer'], $persona['telefonoPer'], $persona['telefonoEmergencia'],
-                    $persona['direccion'], $persona['activo'], $persona['curp']
+                    $persona['direccion'], $persona['activo']
                 );
             }
     
