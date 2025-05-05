@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 if (isset($_POST['eliminarProduccion']) && $_POST['eliminarProduccion'] === 'eliminarProduccion') {
     // Recibir datos del formulario en PHP
-    $idProduccion          = $_POST['idProduccion'];
+    $idProduccion  = $_POST['idProduccion'];
     $daoProduccion = new daoProduccion();
     $registo = $daoProduccion->eliminarProduccion($idProduccion);
     
