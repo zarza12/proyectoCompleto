@@ -61,7 +61,7 @@ class daoPersonas {
                     correoPer = '{$persona->getCorreoElectronico()}',
                     telefonoPer = '{$persona->getTelefonoCelular()}',
                     telefonoEmergencia = '{$persona->getTelefonoEmergencia()}',
-                    direccion = '{$persona->getDireccion()}'
+                    direccion = '{$persona->getDireccion()}',
                     curp = '{$persona->getCurp()}'
                     WHERE idPer = '{$persona->getId()}'";
     
