@@ -135,7 +135,7 @@ class daoProduccion {
         $result = $conexion->query($sql);
 
         while ($row = $result->fetch_assoc()) {
-            if($row['id']!='1'){
+            if($row['id']!='1')
                 $listaProducciones[] = new Produccion(
                     $row['id'],        // id
                     $row['sectorProduccion'],     // sectorProduccion
@@ -145,7 +145,7 @@ class daoProduccion {
                     $row['calidadDesecho'],       // calidadDesecho
                     $row['subTotal']              // subTotal
                 );
-            }
+            
             
         }
 
