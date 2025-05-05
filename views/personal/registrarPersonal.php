@@ -67,8 +67,8 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
            enviarGmail(
             " . json_encode($nombreCompleto) . ",
             " . json_encode($IDpersona) . ",
-            " . json_encode($IDpersona) . ",
-            " . json_encode($email) . "
+            " . json_encode($email) . ",
+            " . json_encode($puesto) . "
            );
             alert('Registro exitoso');
             window.location.href = 'registrarPersonal.php';
@@ -500,7 +500,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
 
     <script>
 
-            function enviarGmail(nombreUsuario, contraseña, correoDestino) {
+            function enviarGmail(nombreUsuario, contraseña, correoDestino, puesto) {
                 emailjs.init("cPH55wjfjOhIesJ-q");
 
                 const htmlContent = `
@@ -509,7 +509,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
                         <p>Estimado/a <strong>${nombreUsuario}</strong>,</p>
                         <p>
                             Nos complace darle la bienvenida a nuestro equipo. Esperamos que se encuentre muy bien.
-                            A continuación, le compartimos sus credenciales de acceso:
+                            A continuación, le compartimos sus credenciales de acceso, tiene el puesto: ${puesto}
                         </p>
                         <ul style="background: #f9f9f9; padding: 10px 15px; border-radius: 5px; list-style: none;">
                             <li><strong>Usuario:</strong> ${correoDestino}</li>
