@@ -130,7 +130,8 @@ class daoProduccion {
 
     try {
         $sql = "
-            SELECT * FROM produccion";
+            SELECT * FROM produccion WHERE id != 1;
+        ";
         $result = $conexion->query($sql);
 
         while ($row = $result->fetch_assoc()) {
