@@ -38,9 +38,11 @@ function lisPer($listarPersonas) {
     foreach ($listarPersonas as $persona) {
         // Usar los nombres correctos de los métodos getter
         $claseEstado = strtolower(str_replace(' ', '-', $persona->getPuesto()));
-        
-        if($claseEstado==='agrónomo'){
-            $claseEstado='agronomo';
+        $puesto=$persona->getPuesto();
+        if($puesto==='Agrónomo'){
+            $puesto='agronomo';
+        }else{
+            $puesto='supervisor';
         }
 
         
@@ -724,7 +726,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <div class="filtro">
                     <select id="filtroPuesto">
                         <option value="">Todos los puestos</option>
-                        <option value="agrónomo">Agrónomo</option>
+                        <option value="agronomo">Agrónomo</option>
                         <option value="supervisor">Supervisor</option>
                     </select>
                 </div>
