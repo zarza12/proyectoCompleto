@@ -160,7 +160,7 @@ class daoEntregas {
     }
 
 
-    public function calcularTotalesPorFecha($fecha, $tipoTotal = null, mysqli $conexion) {
+    public function calcularTotalesPorFecha($fecha, $tipoTotal, mysqli $conexion) {
         $totales = [
             // Totales de ventas
             'ventaDesecho' => 0,

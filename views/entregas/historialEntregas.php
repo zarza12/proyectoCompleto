@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once '/controllers/daoEntregas.php';
+include_once '../../controllers/daoEntregas.php';
 $nombre = $_SESSION['nombre'] ?? 'Invitado';
 $avatar = substr($nombre, 0, 1);
 // No cierres el PHP, simplemente empieza el HTML
