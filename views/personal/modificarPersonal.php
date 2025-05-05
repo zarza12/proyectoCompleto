@@ -38,11 +38,9 @@ function lisPer($listarPersonas) {
     foreach ($listarPersonas as $persona) {
         // Usar los nombres correctos de los métodos getter
         $claseEstado = strtolower(str_replace(' ', '-', $persona->getPuesto()));
-        $puesto=$persona->getPuesto();
-        if($puesto==='Agrónomo'){
-            $puesto='agronomo';
-        }else{
-            $puesto='agronomo';
+        
+        if($claseEstado==='agrónomo'){
+            $claseEstado='agronomo';
         }
 
         
@@ -886,7 +884,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <i class="fas fa-briefcase campo-icono"></i>
                                 <select id="modificarPuesto" name="modificarPuesto" class="form-select" required>
                                     <option value="">Seleccione un puesto...</option>
-                                    <option value="Agronomo">Agrónomo</option>
+                                    <option value="Agronómo">Agrónomo</option>
                                     <option value="Supervisor">Supervisor</option>
                                 </select>
                             </div>
@@ -984,10 +982,9 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 document.getElementById('modificarNombreCompleto').value = personal.nombre;
                 document.getElementById('modificarDni').value = personal.dni;
                 document.getElementById('modificarCurp').value = personal.curp;
-                console.log(personal.curp);
                 document.getElementById('modificarFechaNacimiento').value = personal.fechaNacimiento;
                 document.getElementById('modificarGenero').value = personal.genero;
-                console.log(personal.puesto);
+                console.log(personal.genero);
                 document.getElementById('modificarPuesto').value = personal.puesto;
                 document.getElementById('modificarFechaIngreso').value = personal.fechaIngreso;
                 document.getElementById('modificarEmail').value = personal.email;
