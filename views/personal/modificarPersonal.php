@@ -11,26 +11,19 @@ $listarPersonas = $daoPersona->listarPersonal();
 // Crear un array para los datos de JavaScript
 $personasJS = [];
 foreach ($listarPersonas as $persona) {
-    $puesto=$persona->getPuesto();
-    if($puesto==='Agrónomo'){
-        $puesto='agronomo';
-    }else{
-        $puesto='supervisor';
-    }
     $personasJS[] = [
-
         'id' => $persona->getId(),
         'nombre' => $persona->getNombreCompleto(),
         'dni' => $persona->getId(), // Asumiendo que el ID es el DNI
         'fechaNacimiento' => $persona->getFechaNacimiento(),
         'genero' => $persona->getGenero(),
-        'puesto' => $puesto,
+        'puesto' => $persona->getPuesto(),
         'fechaIngreso' => $persona->getFechaIngreso(),
         'email' => $persona->getCorreoElectronico(),
         'telefono' => $persona->getTelefonoCelular(),
         'telefonoEmergencia' => $persona->getTelefonoEmergencia(),
         'direccion' => $persona->getDireccion(),
-        'curp' => $persona->getCurp()
+        'curp' => $persona->setCrup()
     ];
    
 }
@@ -44,10 +37,13 @@ function lisPer($listarPersonas) {
     
     foreach ($listarPersonas as $persona) {
         // Usar los nombres correctos de los métodos getter
-
         $claseEstado = strtolower(str_replace(' ', '-', $persona->getPuesto()));
-        
-
+        $puesto=$persona->getPuesto();
+        if($puesto==='Agrónomo'){
+            $puesto='agronomo';
+        }else{
+            $puesto='agronomo';
+        }
 
         
         
@@ -730,7 +726,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <div class="filtro">
                     <select id="filtroPuesto">
                         <option value="">Todos los puestos</option>
-                        <option value="agronomo">Agrónomo</option>
+                        <option value="agrónomo">Agrónomo</option>
                         <option value="supervisor">Supervisor</option>
                     </select>
                 </div>
@@ -761,7 +757,50 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <tbody>
                 <?php echo $htmlListado; ?>
                     <!-- Estas filas serían generadas dinámicamente desde la base de datos -->
-
+                    <tr onclick="seleccionarRegistro('P001')" id="fila-P001">
+                        <td>P001</td>
+                        <td>María López García</td>
+                        <td><span class="estado estado-agronomo">Agrónomo</span></td>
+                        <td>01/02/2023</td>
+                        <td>987654321</td>
+                        <td>
+                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P001')"><i class="fas fa-pen"></i></button>
+                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr onclick="seleccionarRegistro('P002')" id="fila-P002">
+                        <td>P002</td>
+                        <td>Juan Martínez Ruiz</td>
+                        <td><span class="estado estado-supervisor">Supervisor</span></td>
+                        <td>15/05/2022</td>
+                        <td>912345678</td>
+                        <td>
+                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P002')"><i class="fas fa-pen"></i></button>
+                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr onclick="seleccionarRegistro('P003')" id="fila-P003">
+                        <td>P003</td>
+                        <td>Ana Sánchez Vidal</td>
+                        <td><span class="estado estado-agronomo">Agrónomo</span></td>
+                        <td>10/06/2021</td>
+                        <td>923456789</td>
+                        <td>
+                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P003')"><i class="fas fa-pen"></i></button>
+                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr onclick="seleccionarRegistro('P004')" id="fila-P004">
+                        <td>P004</td>
+                        <td>Pedro González Torres</td>
+                        <td><span class="estado estado-supervisor">Supervisor</span></td>
+                        <td>03/12/2022</td>
+                        <td>934567890</td>
+                        <td>
+                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P004')"><i class="fas fa-pen"></i></button>
+                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
