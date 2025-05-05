@@ -11,13 +11,20 @@ $listarPersonas = $daoPersona->listarPersonal();
 // Crear un array para los datos de JavaScript
 $personasJS = [];
 foreach ($listarPersonas as $persona) {
+    $puesto2=$persona->getPuesto();
+    if($puesto==='Agrónomo'){
+        $puesto='agronomo';
+    }else{
+        $puesto='supervisor';
+    }
     $personasJS[] = [
+
         'id' => $persona->getId(),
         'nombre' => $persona->getNombreCompleto(),
         'dni' => $persona->getId(), // Asumiendo que el ID es el DNI
         'fechaNacimiento' => $persona->getFechaNacimiento(),
         'genero' => $persona->getGenero(),
-        'puesto' => $persona->getPuesto(),
+        'puesto' => $puesto,
         'fechaIngreso' => $persona->getFechaIngreso(),
         'email' => $persona->getCorreoElectronico(),
         'telefono' => $persona->getTelefonoCelular(),
@@ -37,21 +44,17 @@ function lisPer($listarPersonas) {
     
     foreach ($listarPersonas as $persona) {
         // Usar los nombres correctos de los métodos getter
-        $puesto=$persona->getPuesto();
-        $claseEstado = strtolower(str_replace(' ', '-', $puesto));
+
+        $claseEstado = strtolower(str_replace(' ', '-', $persona->getPuesto()));
         
-        if($puesto==='Agrónomo'){
-            $puesto='agronomo';
-        }else{
-            $puesto='supervisor';
-        }
+
 
         
         
         $html .= '<tr onclick="seleccionarRegistro(\'' . $persona->getId() . '\')" id="fila-' . $persona->getId() . '">';
         $html .= '<td>' . $persona->getId() . '</td>';
         $html .= '<td>' . $persona->getNombreCompleto() . '</td>'; 
-        $html .= '<td><span class="estado estado-' . $claseEstado . '">' . $puesto . '</span></td>';
+        $html .= '<td><span class="estado estado-' . $claseEstado . '">' . $persona->getPuesto() . '</span></td>';
         $html .= '<td>' . $persona->getFechaIngreso() . '</td>';
         $html .= '<td>' . $persona->getTelefonoCelular() . '</td>'; 
         $html .= '<td>
