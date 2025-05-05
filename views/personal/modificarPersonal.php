@@ -761,39 +761,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <tbody>
                 <?php echo $htmlListado; ?>
                     <!-- Estas filas serían generadas dinámicamente desde la base de datos -->
-                    <tr onclick="seleccionarRegistro('P001')" id="fila-P001">
-                        <td>P001</td>
-                        <td>María López García</td>
-                        <td><span class="estado estado-agronomo">Agrónomo</span></td>
-                        <td>01/02/2023</td>
-                        <td>987654321</td>
-                        <td>
-                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P001')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr onclick="seleccionarRegistro('P002')" id="fila-P002">
-                        <td>P002</td>
-                        <td>Juan Martínez Ruiz</td>
-                        <td><span class="estado estado-supervisor">Supervisor</span></td>
-                        <td>15/05/2022</td>
-                        <td>912345678</td>
-                        <td>
-                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P002')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr onclick="seleccionarRegistro('P003')" id="fila-P003">
-                        <td>P003</td>
-                        <td>Ana Sánchez Vidal</td>
-                        <td><span class="estado estado-agronomo">Agrónomo</span></td>
-                        <td>10/06/2021</td>
-                        <td>923456789</td>
-                        <td>
-                            <button class="btn-accion btn-editar" onclick="seleccionarRegistro('P003')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
+                  
                     <tr onclick="seleccionarRegistro('P004')" id="fila-P004">
                         <td>P004</td>
                         <td>Pedro González Torres</td>
@@ -990,7 +958,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 document.getElementById('modificarCurp').value = personal.curp;
                 document.getElementById('modificarFechaNacimiento').value = personal.fechaNacimiento;
                 document.getElementById('modificarGenero').value = personal.genero;
-                console.log(personal.genero);
+                console.log(personal.puesto);
                 document.getElementById('modificarPuesto').value = personal.puesto;
                 document.getElementById('modificarFechaIngreso').value = personal.fechaIngreso;
                 document.getElementById('modificarEmail').value = personal.email;
