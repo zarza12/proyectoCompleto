@@ -544,7 +544,7 @@ $avatar = substr($nombre, 0, 1);
         <nav id="navegacion">
             <ul>
             <li class="elementoMenu">
-                            <a href="/dashboard/ProyectoMari/proyectoCompleto/views/sectores.php">
+                            <a href="/views/sectores.php">
                                 <label class="icono">✏️</label>
                                 <label class="menuTexto">Registrar Sectores</label>
                             </a>
