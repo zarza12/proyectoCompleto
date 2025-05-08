@@ -558,7 +558,7 @@ $sectoresJSON = json_encode($listarSectores);
         <h4><i class="fas fa-edit"></i> Editar Sector</h4>
         <span class="cerrar-modal" id="cerrarModalEditar">&times;</span>
       </div>
-      <form id="formularioSector" name="formularioSector" class="formulario">
+      <form id="formularioSector" method="POST" action="sectores.php" class="formulario">
         <div class="campo-grupo">
           <label for="nombreSector">Nombre del Sector</label>
           <input type="text" id="nombreSector" name="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
