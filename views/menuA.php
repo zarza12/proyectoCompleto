@@ -702,7 +702,7 @@ $avatar = substr($nombre, 0, 1);
         </nav>
 
         <div id="piePagina">
-            <a href="/views/personal/sessionEliminar.php">
+            <a href="/views/sessionEliminar.php">
                 <label class="icono">🚪</label>
                 <label class="logoutText">Cerrar Sesión</label>
             </a>
