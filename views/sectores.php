@@ -605,8 +605,9 @@ $sectoresJSON = json_encode($listarSectores);
   
   <script>
     // Datos de ejemplo para iniciar la tabla
-    /*[
+    
     let sectores = <?php echo $sectoresJSON; ?>
+    /*[
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
       { id: 3, fecha: '2025-04-07', nombre: 'Sector Este', descripcion: 'Área de distribución este' }
