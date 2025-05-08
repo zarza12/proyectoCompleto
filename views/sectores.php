@@ -505,7 +505,7 @@ $sectoresJSON = json_encode($listarSectores);
       <div class="formulario-cabecera">
         <h3><i class="fas fa-plus-circle"></i> Registrar Nuevo Sector</h3>
       </div>
-      <form id="formularioSector" class="formulario">
+      <form id="formularioSector" method="POST" action="sectores.php" class="formulario">
         <div class="campo-grupo">
           <label for="nombreSector">Nombre del Sector</label>
           <input type="text" id="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
