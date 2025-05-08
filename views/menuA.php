@@ -3,6 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $nombre = $_SESSION['nombre'] ?? 'Invitado';
+if($nombre =='Invitado'){
+    echo "<script>alert('Seccion cerrada por inactivo'); window.location.href = 'index.php';</script>";
+    exit;
+}
 $avatar = substr($nombre, 0, 1);
 // No cierres el PHP, simplemente empieza el HTML
 ?>
