@@ -508,21 +508,22 @@ $sectoresJSON = json_encode($listarSectores);
       <form id="formularioSector" method="POST" action="sectores.php" class="formulario">
         <div class="campo-grupo">
           <label for="nombreSector">Nombre del Sector</label>
-          <input type="text" id="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
+          <input type="text" id="nombreSector" name="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
         </div>
         <div class="campo-grupo">
           <label for="descripcionSector">Descripción</label>
-          <input type="text" id="descripcionSector" class="campo-input" placeholder="Ingrese la descripción del sector" required>
+          <input type="text" id="descripcionSector" name="descripcionSector" class="campo-input" placeholder="Ingrese la descripción del sector" required>
         </div>
         <div class="campo-grupo">
           <label for="fechaRegistro">Fecha de Registro</label>
-          <input type="text" id="fechaRegistro" class="campo-input campo-fecha" readonly>
+          <input type="text" id="fechaRegistro" name="fechaRegistro" class="campo-input campo-fecha" readonly>
         </div>
         <div>
-          <button type="submit" class="boton-guardar"><i class="fas fa-save"></i> Guardar Sector</button>
+          <button type="submit" class="boton-guardar" value="registrarSector" name="registrarSector" ><i class="fas fa-save"></i> Guardar Sector</button>
           <button type="reset" class="boton-reset"><i class="fas fa-sync-alt"></i> Limpiar</button>
         </div>
       </form>
+
     </div>
     
     <!-- Tabla de sectores -->
