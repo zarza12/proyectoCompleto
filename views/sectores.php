@@ -18,7 +18,7 @@ if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrar
   $daoSectores = new daoSector();
    
 
-  $registo = $daoSectores->registrarPersonas($sector);
+  $registo = $daoSectores->registrarSector($sector);
 
   if ($registo) {
       echo "
