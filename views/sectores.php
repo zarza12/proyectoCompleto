@@ -14,7 +14,7 @@ if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrar
   $nombreJunto = str_replace(' ', '_', $nombre);
 
   // Pasar los 4 como parámetros
-  $sector = new Sector($nombre, $nombreJunto, $descripcion, $fecha);
+  $sector = new Sector(null,$nombre, $nombreJunto, $descripcion, $fecha);
   $daoSectores = new daoSector();
    
 
@@ -34,8 +34,8 @@ if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrar
      
   }
 }
-$daoSectores = new daoSector();
-$listarSectores = $daoSectores->listarSectores();
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectores();
 $sectoresJSON = json_encode($listarSectores);
 
 ?>
