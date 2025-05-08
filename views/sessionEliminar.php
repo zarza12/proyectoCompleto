@@ -9,6 +9,6 @@ session_destroy();
 
 // Opcionalmente, puedes enviar una respuesta
 http_response_code(200);
-echo "<script>alert('Seccion cerrada con exito'); window.location.href = 'index.php';</script>";
+echo "<script> window.location.href = 'index.php';</script>";
 exit;
 ?>

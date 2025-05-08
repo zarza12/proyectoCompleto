@@ -2,8 +2,42 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+include_once  '../../controllers/daoSector.php';
+include_once  '../../models/Sector.php';
 
-// No cierres el PHP, simplemente empieza el HTML
+if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
+  // Recibir datos del formulario en PHP
+
+  $nombre      = $_POST['nombreSector'];
+  $descripcion = $_POST['descripcionSector'];
+  $fecha       = $_POST['fechaRegistro'];
+  $nombreJunto = str_replace(' ', '_', $nombre);
+
+  // Pasar los 4 como parámetros
+  $sector = new Sector($nombre, $nombreJunto, $descripcion, $fecha);
+  $daoSectores = new daoSector();
+   
+
+  $registo = $daoSectores->registrarPersonas($sector);
+
+  if ($registo) {
+      echo "
+      <script>
+         
+              alert('Registro exitoso');
+              window.location.href = 'sectores.php';
+          
+      </script>";
+      
+  } else {
+      mostrarMensaje("Error al insertar el registro.");
+     
+  }
+}
+$daoSectores = new daoSector();
+$listarSectores = $daoSectores->listarSectores();
+$sectoresJSON = json_encode($listarSectores);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -524,21 +558,25 @@ if (session_status() === PHP_SESSION_NONE) {
         <h4><i class="fas fa-edit"></i> Editar Sector</h4>
         <span class="cerrar-modal" id="cerrarModalEditar">&times;</span>
       </div>
-      <form id="formularioEditar" class="modal-cuerpo">
-        <input type="hidden" id="editarId">
+      <form id="formularioSector" name="formularioSector" class="formulario">
         <div class="campo-grupo">
-          <label for="editarNombre">Nombre del Sector</label>
-          <input type="text" id="editarNombre" class="campo-input" required>
+          <label for="nombreSector">Nombre del Sector</label>
+          <input type="text" id="nombreSector" name="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
         </div>
         <div class="campo-grupo">
-          <label for="editarDescripcion">Descripción</label>
-          <input type="text" id="editarDescripcion" class="campo-input" required>
+          <label for="descripcionSector">Descripción</label>
+          <input type="text" id="descripcionSector" name="descripcionSector" class="campo-input" placeholder="Ingrese la descripción del sector" required>
         </div>
         <div class="campo-grupo">
-          <label for="editarFecha">Fecha de Registro</label>
-          <input type="text" id="editarFecha" class="campo-input campo-fecha" readonly>
+          <label for="fechaRegistro">Fecha de Registro</label>
+          <input type="text" id="fechaRegistro" name="fechaRegistro" class="campo-input campo-fecha" readonly>
+        </div>
+        <div>
+          <button type="submit" class="boton-guardar" value="registrarSector" name="registrarSector"><i class="fas fa-save"></i> Guardar Sector</button>
+          <button type="reset" class="boton-reset"><i class="fas fa-sync-alt"></i> Limpiar</button>
         </div>
       </form>
+
       <div class="modal-pie">
         <button type="button" class="boton-reset" id="cancelarEditar"><i class="fas fa-times"></i> Cancelar</button>
         <button type="button" class="boton-guardar" id="guardarEditar"><i class="fas fa-save"></i> Guardar Cambios</button>
@@ -567,11 +605,12 @@ if (session_status() === PHP_SESSION_NONE) {
   
   <script>
     // Datos de ejemplo para iniciar la tabla
-    let sectores = [
+    /*[
+    let sectores = <?php echo $sectoresJSON; ?>
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
       { id: 3, fecha: '2025-04-07', nombre: 'Sector Este', descripcion: 'Área de distribución este' }
-    ];
+    ];*/
     
     // Función para formatear fecha (YYYY-MM-DD)
     function formatearFecha(fecha) {
@@ -678,7 +717,7 @@ if (session_status() === PHP_SESSION_NONE) {
     }
     
     // Función para guardar un nuevo sector
-    function guardarSector(event) {
+    /*function guardarSector(event) {
       event.preventDefault();
       
       const nombre = document.getElementById('nombreSector').value.trim();
@@ -713,7 +752,7 @@ if (session_status() === PHP_SESSION_NONE) {
       
       // Mostrar mensaje de éxito (podría implementarse con una notificación)
       alert('Sector guardado con éxito');
-    }
+    }*/
     
     // Función para editar sector
     function editarSector() {
@@ -775,7 +814,7 @@ if (session_status() === PHP_SESSION_NONE) {
       actualizarTablaSectores();
       
       // Eventos del formulario principal
-      document.getElementById('formularioSector').addEventListener('submit', guardarSector);
+
       
       // Eventos del buscador
       document.getElementById('buscadorSector').addEventListener('input', function() {
