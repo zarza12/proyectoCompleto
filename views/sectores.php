@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once  '../../controllers/daoSector.php';
-include_once  '../../models/Sector.php';
+include_once  '../controllers/daoSector.php';
+include_once  '../models/Sector.php';
 
 if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
   // Recibir datos del formulario en PHP
