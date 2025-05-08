@@ -1,7 +1,7 @@
 <?php
 include_once  '../../controllers/conn.php';
 include_once  '../../controllers/daoInventario.php';
-
+include_once  '../../models/Sector.php';
 
 class daoSector {
 
