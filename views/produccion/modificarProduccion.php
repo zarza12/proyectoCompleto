@@ -1,7 +1,7 @@
 <?php 
 include_once '../../controllers/daoProduccion.php';
 include_once  '../../models/Produccion.php';
-
+include_once  '../../controllers/daoSector.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -67,7 +67,9 @@ foreach ($listarProducciones as $produccion) {
 $produccionesJSON = json_encode($produccionesJS);
 
 
-
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
+$sectoresJSON = json_encode($listarSectores);
 
 ?>
 <!DOCTYPE html>
@@ -301,13 +303,15 @@ $produccionesJSON = json_encode($produccionesJS);
 
 <script>
     // Sectores disponibles
-    const sectores = [
+    const sectores = <?php echo $sectoresJSON; ?>;
+    
+    /*[
         { value: 'sector_a', label: 'Sector A' },
         { value: 'sector_ak', label: 'Sector Ak' },
         { value: 'sector_b', label: 'Sector B' },
         { value: 'sector_c', label: 'Sector C' },
         { value: 'sector_d', label: 'Sector D' }
-    ];
+    ];*/
 
     // Datos de producción desde PHP
     const datosRegistros = <?php echo $produccionesJSON; ?>;
