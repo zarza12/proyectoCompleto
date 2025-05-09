@@ -55,7 +55,7 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
       echo "
       <script>
          
-              alert('Modifico exitoso');
+              alert('Sector actualizado con éxito');
               window.location.href = 'sectores.php';
           
       </script>";
@@ -79,7 +79,7 @@ if (isset($_POST['confirmarEliminar']) && $_POST['confirmarEliminar'] === 'confi
   if ($registo) {
       echo "
       <script>
-              alert('Registro exitoso');
+              alert('Eliminacion exitoso');
               window.location.href = 'sectores.php';
       </script>";
       
@@ -846,7 +846,7 @@ $sectoresJSON = json_encode($listarSectores);
       cerrarModalEditar();
       
       // Mostrar mensaje de éxito (podría implementarse con una notificación)
-      alert('Sector actualizado con éxito');
+
     }
     
     // Función para eliminar sector
@@ -862,8 +862,6 @@ $sectoresJSON = json_encode($listarSectores);
       // Cerrar modal
       cerrarModalEliminar();
       
-      // Mostrar mensaje de éxito
-      alert('Sector eliminado con éxito');
     }
     
     // Función para actualizar la fecha actual en el formulario
