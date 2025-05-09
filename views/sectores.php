@@ -648,6 +648,7 @@ $sectoresJSON = json_encode($listarSectores, JSON_UNESCAPED_UNICODE);
     // Datos de ejemplo para iniciar la tabla
     
     let sectores = <?php echo $sectoresJSON; ?>;
+    console.log(<?php echo $sectoresJSON; ?>);
     /*[
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
