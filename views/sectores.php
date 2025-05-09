@@ -2,72 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once  '../controllers/daoSector.php';
-include_once  '../models/Sector.php';
 
-if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
-  // Recibir datos del formulario en PHP
-
-  $nombre      = $_POST['nombreSector'];
-  $descripcion = $_POST['descripcionSector'];
-  $fecha       = $_POST['fechaRegistro'];
-  $nombreJunto = str_replace(' ', '_', $nombre);
-
-  // Pasar los 4 como parámetros
-  $sector = new Sector(null,$nombre, $nombreJunto, $descripcion, $fecha);
-  $daoSectores = new daoSector();
-   
-
-  $registo = $daoSectores->registrarSector($sector);
-
-  if ($registo) {
-      echo "
-      <script>
-         
-              alert('Registro exitoso');
-              window.location.href = 'sectores.php';
-          
-      </script>";
-      
-  } else {
-      mostrarMensaje("Error al insertar el registro.");
-     
-  }
-}
-
-if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
-  // Recibir datos del formulario en PHP
-
-  $nombre      = $_POST['nombreSector'];
-  $descripcion = $_POST['descripcionSector'];
-  $fecha       = $_POST['fechaRegistro'];
-  $nombreJunto = str_replace(' ', '_', $nombre);
-
-  // Pasar los 4 como parámetros
-  $sector = new Sector(null,$nombre, $nombreJunto, $descripcion, $fecha);
-  $daoSectores = new daoSector();
-   
-
-  $registo = $daoSectores->registrarSector($sector);
-
-  if ($registo) {
-      echo "
-      <script>
-         
-              alert('Registro exitoso');
-              window.location.href = 'sectores.php';
-          
-      </script>";
-      
-  } else {
-      mostrarMensaje("Error al insertar el registro.");
-     
-  }
-}
-$daoSectores2 = new daoSector();
-$listarSectores = $daoSectores2->listarSectores();
-$sectoresJSON = json_encode($listarSectores);
-
+// No cierres el PHP, simplemente empieza el HTML
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -535,25 +471,24 @@ $sectoresJSON = json_encode($listarSectores);
       <div class="formulario-cabecera">
         <h3><i class="fas fa-plus-circle"></i> Registrar Nuevo Sector</h3>
       </div>
-      <form id="formularioSector" method="POST" action="sectores.php" class="formulario">
+      <form id="formularioSector" class="formulario">
         <div class="campo-grupo">
           <label for="nombreSector">Nombre del Sector</label>
-          <input type="text" id="nombreSector" name="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
+          <input type="text" id="nombreSector" class="campo-input" placeholder="Ingrese el nombre del sector" required>
         </div>
         <div class="campo-grupo">
           <label for="descripcionSector">Descripción</label>
-          <input type="text" id="descripcionSector" name="descripcionSector" class="campo-input" placeholder="Ingrese la descripción del sector" required>
+          <input type="text" id="descripcionSector" class="campo-input" placeholder="Ingrese la descripción del sector" required>
         </div>
         <div class="campo-grupo">
           <label for="fechaRegistro">Fecha de Registro</label>
-          <input type="text" id="fechaRegistro" name="fechaRegistro" class="campo-input campo-fecha" readonly>
+          <input type="text" id="fechaRegistro" class="campo-input campo-fecha" readonly>
         </div>
         <div>
-          <button type="submit" class="boton-guardar" value="registrarSector" name="registrarSector" ><i class="fas fa-save"></i> Guardar Sector</button>
+          <button type="submit" class="boton-guardar"><i class="fas fa-save"></i> Guardar Sector</button>
           <button type="reset" class="boton-reset"><i class="fas fa-sync-alt"></i> Limpiar</button>
         </div>
       </form>
-
     </div>
     
     <!-- Tabla de sectores -->
@@ -589,35 +524,25 @@ $sectoresJSON = json_encode($listarSectores);
         <h4><i class="fas fa-edit"></i> Editar Sector</h4>
         <span class="cerrar-modal" id="cerrarModalEditar">&times;</span>
       </div>
-          <form id="formularioEditar" class="modal-cuerpo">
-            <input type="hidden" id="editarId" name="id">
-            
-            <div class="campo-grupo">
-              <label for="editarNombre">Nombre del Sector</label>
-              <input type="text" id="editarNombre" name="nombre" class="campo-input" required>
-            </div>
-            
-            <div class="campo-grupo">
-              <label for="editarDescripcion">Descripción</label>
-              <input type="text" id="editarDescripcion" name="descripcion" class="campo-input" required>
-            </div>
-            
-            <div class="campo-grupo">
-              <label for="editarFecha">Fecha de Registro</label>
-              <input type="text" id="editarFecha" name="fecha" class="campo-input campo-fecha" readonly>
-            </div>
-            
-            <div class="modal-pie">
-              <button type="button" class="boton-reset" id="cancelarEditar">
-                <i class="fas fa-times"></i> Cancelar
-              </button>
-              <button type="button" class="boton-guardar" id="guardarEditar" value="guardarEditar" name="guardarEditar">
-                <i class="fas fa-save"></i> Guardar Cambios
-              </button>
-            </div>
-          </form>
-
-
+      <form id="formularioEditar" class="modal-cuerpo">
+        <input type="hidden" id="editarId">
+        <div class="campo-grupo">
+          <label for="editarNombre">Nombre del Sector</label>
+          <input type="text" id="editarNombre" class="campo-input" required>
+        </div>
+        <div class="campo-grupo">
+          <label for="editarDescripcion">Descripción</label>
+          <input type="text" id="editarDescripcion" class="campo-input" required>
+        </div>
+        <div class="campo-grupo">
+          <label for="editarFecha">Fecha de Registro</label>
+          <input type="text" id="editarFecha" class="campo-input campo-fecha" readonly>
+        </div>
+      </form>
+      <div class="modal-pie">
+        <button type="button" class="boton-reset" id="cancelarEditar"><i class="fas fa-times"></i> Cancelar</button>
+        <button type="button" class="boton-guardar" id="guardarEditar"><i class="fas fa-save"></i> Guardar Cambios</button>
+      </div>
     </div>
   </div>
   
@@ -642,13 +567,11 @@ $sectoresJSON = json_encode($listarSectores);
   
   <script>
     // Datos de ejemplo para iniciar la tabla
-    
-    let sectores = <?php echo $sectoresJSON; ?>
-    /*[
+    let sectores = [
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
       { id: 3, fecha: '2025-04-07', nombre: 'Sector Este', descripcion: 'Área de distribución este' }
-    ];*/
+    ];
     
     // Función para formatear fecha (YYYY-MM-DD)
     function formatearFecha(fecha) {
@@ -755,7 +678,7 @@ $sectoresJSON = json_encode($listarSectores);
     }
     
     // Función para guardar un nuevo sector
-    /*function guardarSector(event) {
+    function guardarSector(event) {
       event.preventDefault();
       
       const nombre = document.getElementById('nombreSector').value.trim();
@@ -790,7 +713,7 @@ $sectoresJSON = json_encode($listarSectores);
       
       // Mostrar mensaje de éxito (podría implementarse con una notificación)
       alert('Sector guardado con éxito');
-    }*/
+    }
     
     // Función para editar sector
     function editarSector() {
@@ -852,7 +775,7 @@ $sectoresJSON = json_encode($listarSectores);
       actualizarTablaSectores();
       
       // Eventos del formulario principal
-
+      document.getElementById('formularioSector').addEventListener('submit', guardarSector);
       
       // Eventos del buscador
       document.getElementById('buscadorSector').addEventListener('input', function() {
