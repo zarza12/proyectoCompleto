@@ -74,7 +74,7 @@ if (isset($_POST['confirmarEliminar']) && $_POST['confirmarEliminar'] === 'confi
 
 
   $daoSectores = new daoSector();
-  $registo = $daoSectores->eliminarSector($sector);
+  $registo = $daoSectores->eliminarSector($eliminarId);
 
   if ($registo) {
       echo "
