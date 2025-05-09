@@ -644,14 +644,14 @@ $sectoresJSON = json_encode($listarSectores);
   </div>
   
   <script>
-    // Datos de ejemplo para iniciar la tabla
+    // Datos de ejemplo para iniciar la tabla <?php echo $sectoresJSON; ?>;
     
-    let sectores = <?php echo $sectoresJSON; ?>;
-    /*[
+    let sectores = 
+    [
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
       { id: 3, fecha: '2025-04-07', nombre: 'Sector Este', descripcion: 'Área de distribución este' }
-    ];*/
+    ];
     
     // Función para formatear fecha (YYYY-MM-DD)
     function formatearFecha(fecha) {
