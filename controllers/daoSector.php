@@ -83,7 +83,7 @@ class daoSector {
     
             while ($sector = $sectores->fetch_assoc()) {
                 $listaSectores[] = [
-                    'id'          => $sector['id'],                         // ID autoincremental
+                    'id'          => (int)$sector['id'],                         // ID autoincremental
                     'fecha'       => $sector['fechaRegistro'],              // Fecha de registro
                     'nombre'      => $sector['nombreSector'],               // Nombre del sector
                     'descripcion' => $sector['descripcionSector']           // Descripción del sector

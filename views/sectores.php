@@ -67,7 +67,7 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
 }
 $daoSectores2 = new daoSector();
 $listarSectores = $daoSectores2->listarSectores();
-$sectoresJSON = json_encode($listarSectores, JSON_UNESCAPED_UNICODE);
+$sectoresJSON = json_encode($listarSectores);
 
 
 ?>
