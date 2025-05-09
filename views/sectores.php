@@ -591,7 +591,7 @@ $sectoresJSON = json_encode($listarSectores);
         <h4><i class="fas fa-edit"></i> Editar Sector</h4>
         <span class="cerrar-modal" id="cerrarModalEditar">&times;</span>
       </div>
-          <form id="formularioEditar" class="modal-cuerpo">
+          <form id="formularioEditar" method="POST" action="sectores.php" class="modal-cuerpo">
             <input type="hidden" id="editarId" name="id">
             
             <div class="campo-grupo">
@@ -613,7 +613,7 @@ $sectoresJSON = json_encode($listarSectores);
               <button type="button" class="boton-reset" id="cancelarEditar">
                 <i class="fas fa-times"></i> Cancelar
               </button>
-              <button type="button" class="boton-guardar" id="guardarEditar" value="guardarEditar" name="guardarEditar">
+              <button type="submit" class="boton-guardar" id="guardarEditar" value="guardarEditar" name="guardarEditar">
                 <i class="fas fa-save"></i> Guardar Cambios
               </button>
             </div>
