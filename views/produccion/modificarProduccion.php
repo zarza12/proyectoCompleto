@@ -323,10 +323,10 @@ $sectoresJSON = json_encode($listarSectores);
         sectores.forEach(opt => {
             const o1 = document.createElement('option');
             o1.value = opt.value;
-            o1.textContent = opt.value;
+            o1.textContent = opt.label;
             filtro.appendChild(o1);
             const o2 = o1.cloneNode(true);
-            modificar.appendChild(o2);
+            modificar.appendChild(o1);
         });
     }
 
