@@ -1,13 +1,11 @@
 <?php 
 include_once '../../controllers/daoProduccion.php';
-include_once  '../../models/Produccion.php';
-include_once  '../../controllers/daoSector.php';
+include_once '../../models/Produccion.php';
+include_once '../../controllers/daoSector.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 if (isset($_POST['modificarProduccionBtn']) && $_POST['modificarProduccionBtn'] === 'modificarProduccionBtn') {
-
     // Recibir datos del formulario en PHP
     $idRegistro          = $_POST['idRegistro'];
     $sectorProduccion    = $_POST['sectorModificar'] ;
@@ -18,7 +16,6 @@ if (isset($_POST['modificarProduccionBtn']) && $_POST['modificarProduccionBtn'] 
     $totalCajas          = $_POST['totalCajasModificar2'] ;
     
     
-
     $produccion = new Produccion(
         $idRegistro , 
         $sectorProduccion,
@@ -30,10 +27,8 @@ if (isset($_POST['modificarProduccionBtn']) && $_POST['modificarProduccionBtn'] 
     );  
     $daoProduccion = new daoProduccion();
    
-
     $registo = $daoProduccion->modificarProduccion($produccion);
     
-
     if ($registo) {
         echo "
         <script>
@@ -45,12 +40,9 @@ if (isset($_POST['modificarProduccionBtn']) && $_POST['modificarProduccionBtn'] 
        
     }
    
-
 }
-
 $daoProduccion = new daoProduccion();
 $listarProducciones = $daoProduccion->listarProduccion();
-
 // Preparar datos para JavaScript
 $produccionesJS = [];
 foreach ($listarProducciones as $produccion) {
@@ -65,12 +57,9 @@ foreach ($listarProducciones as $produccion) {
     ];
 }
 $produccionesJSON = json_encode($produccionesJS);
-
-
 $daoSectores2 = new daoSector();
 $listarSectores = $daoSectores2->listarSectoresParaSelect();
 $sectoresJSON = json_encode($listarSectores);
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -207,7 +196,6 @@ $sectoresJSON = json_encode($listarSectores);
                 <button class="btn btn-exportar"><i class="fas fa-file-export"></i> Exportar Datos</button>
             </div>
         </div>
-
         <div class="filtro-busqueda">
             <div class="busqueda"><i class="fas fa-search"></i><input type="text" placeholder="Buscar registros..." id="buscarRegistro"></div>
             <div class="filtros">
@@ -226,7 +214,6 @@ $sectoresJSON = json_encode($listarSectores);
                 </div>
             </div>
         </div>
-
         <div class="tabla-contenedor">
             <table class="tabla-registros">
                 <thead>
@@ -244,7 +231,6 @@ $sectoresJSON = json_encode($listarSectores);
                 <tbody></tbody>
             </table>
         </div>
-
         <div class="paginacion">
             <button class="btn-pagina"><i class="fas fa-chevron-left"></i></button>
             <button class="btn-pagina activa">1</button>
@@ -252,7 +238,6 @@ $sectoresJSON = json_encode($listarSectores);
             <button class="btn-pagina">3</button>
             <button class="btn-pagina"><i class="fas fa-chevron-right"></i></button>
         </div>
-
         <div class="formulario-edicion" id="formularioEdicion">
             <div class="titulo-formulario">
                 <h3>Editar Registro de Producción</h3>
@@ -288,69 +273,61 @@ $sectoresJSON = json_encode($listarSectores);
             </div>
         </div>
         <div class="calidad-total">Total de cajas: <span id="totalCajasModificar">0</span></div>
-        <input type="text" id="totalCajasModificar2" name="totalCajasModificar2" style="display: none;">
+        <input type="hidden" id="totalCajasModificar2" name="totalCajasModificar2">
         </div>
         <div class="botones-form">
         <button type="button" id="btnCancelar" name="btnCancelar" class="btn btn-secundario" onclick="cancelarEdicion()"><i class="fas fa-times"></i> Cancelar</button>
         <button type="submit" id="modificarProduccionBtn" name="modificarProduccionBtn" value="modificarProduccionBtn" class="btn btn-primario"><i class="fas fa-save"></i> Guardar Cambios</button>
         </div>
     </form>
-
         </div>
     </div>
-
-<!-- No modificaré la parte PHP superior, solo mostraré las correcciones en el JavaScript -->
-
 <script>
     // Sectores disponibles
     const sectores = <?php echo $sectoresJSON; ?>;
     
-    /*[
-        { value: 'sector_a', label: 'Sector A' },
-        { value: 'sector_ak', label: 'Sector Ak' },
-        { value: 'sector_b', label: 'Sector B' },
-        { value: 'sector_c', label: 'Sector C' },
-        { value: 'sector_d', label: 'Sector D' }
-    ];*/
-
     // Datos de producción desde PHP
     const datosRegistros = <?php echo $produccionesJSON; ?>;
-
+    
     // Llenar selects de sector
     function populateSectorSelects() {
         const filtro = document.getElementById('filtroSector');
         const modificar = document.getElementById('sectorModificar');
+        
+        // Limpiar selects primero para evitar duplicados
+        while (filtro.options.length > 1) filtro.remove(1);
+        while (modificar.options.length > 0) modificar.remove(0);
+        
         sectores.forEach(opt => {
             const o1 = document.createElement('option');
             o1.value = opt.value;
             o1.textContent = opt.label;
             filtro.appendChild(o1);
-            const o2 = o1.cloneNode(true);
+            
+            const o2 = document.createElement('option');
+            o2.value = opt.value;
+            o2.textContent = opt.label;
             modificar.appendChild(o2);
         });
     }
-
+    
     // Formatea sector para mostrar
     function formatSectorText(v) {
-        const m = sectores.reduce((acc, s) => (acc[s.value] = s.label, acc), {});
-        return m[v] || v;
+        const sector = sectores.find(s => s.value === v);
+        return sector ? sector.label : v;
     }
-
+    
     // Formatea fecha ISO a DD/MM/YYYY
     function formatDate(iso) {
         if (!iso) return '';
-        const [y, m, d] = iso.split('-');
-        return `${d}/${m}/${y}`;
+        const date = new Date(iso);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
     }
-
-    // Convertir fecha DD/MM/YYYY a formato ISO YYYY-MM-DD
-    function parseDate(dateString) {
-        if (!dateString) return '';
-        const [d, m, y] = dateString.split('/');
-        return `${y}-${m}-${d}`;
-    }
-
-    // Obtener fecha de hoy en formato ISO local (sin ajuste de zona horaria)
+    
+    // Obtener fecha de hoy en formato ISO local
     function getLocalISODate() {
         const now = new Date();
         const year = now.getFullYear();
@@ -358,7 +335,7 @@ $sectoresJSON = json_encode($listarSectores);
         const day = String(now.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
+    
     // Obtener fecha de inicio de semana en formato ISO
     function getStartOfWeekDate() {
         const now = new Date();
@@ -370,7 +347,7 @@ $sectoresJSON = json_encode($listarSectores);
         const date = String(startOfWeek.getDate()).padStart(2, '0');
         return `${year}-${month}-${date}`;
     }
-
+    
     // Obtener fecha de inicio de mes en formato ISO
     function getStartOfMonthDate() {
         const now = new Date();
@@ -378,17 +355,26 @@ $sectoresJSON = json_encode($listarSectores);
         const month = String(now.getMonth() + 1).padStart(2, '0');
         return `${year}-${month}-01`;
     }
-
+    
     // Genera la tabla de registros
     function generarTabla() {
         const tbody = document.querySelector('.tabla-registros tbody');
         tbody.innerHTML = '';
+        
+        if (datosRegistros.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="8" style="text-align: center;">No hay registros disponibles</td>';
+            tbody.appendChild(tr);
+            return;
+        }
+        
         datosRegistros.forEach(reg => {
             const total = reg.exportacion + reg.nacional + reg.desecho;
             const tr = document.createElement('tr');
             tr.id = 'fila-' + reg.id;
+            tr.dataset.id = reg.id;
             tr.dataset.fecha = reg.fecha; // Guardamos la fecha ISO original como atributo data
-            tr.addEventListener('click', () => seleccionarRegistro(reg.id));
+            
             tr.innerHTML = `
                 <td>${reg.id2}</td>
                 <td>${formatSectorText(reg.sector)}</td>
@@ -398,98 +384,204 @@ $sectoresJSON = json_encode($listarSectores);
                 <td><span class="estado estado-nacional">${reg.nacional}</span></td>
                 <td><span class="estado estado-desecho">${reg.desecho}</span></td>
                 <td>
-                    <button class="btn-accion btn-editar"><i class="fas fa-pen"></i></button>
-                    <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                    <button type="button" class="btn-accion btn-editar" onclick="seleccionarRegistro(${reg.id})"><i class="fas fa-pen"></i></button>
+                    <button type="button" class="btn-accion btn-eliminar" onclick="confirmarEliminar(${reg.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
+            
+            // Evento clic para seleccionar fila 
+            tr.addEventListener('click', (e) => {
+                // Evitamos que el clic en los botones de acción seleccione la fila
+                if (!e.target.closest('.btn-accion')) {
+                    seleccionarRegistro(reg.id);
+                }
+            });
+            
             tbody.appendChild(tr);
         });
     }
-
+    
+    // Confirmar eliminar (placeholder - implementar según necesidades)
+    function confirmarEliminar(id) {
+        if (confirm('¿Está seguro que desea eliminar este registro de producción?')) {
+            // Aquí se implementaría la lógica para eliminar
+            console.log('Eliminar registro ID:', id);
+            // Redirigir a página de eliminación o implementar AJAX
+        }
+    }
+    
     // Seleccionar un registro para editar
     function seleccionarRegistro(id) {
-        document.querySelectorAll('.tabla-registros tbody tr').forEach(f => f.classList.remove('fila-activa'));
+        // Quitar clase activa de todas las filas
+        document.querySelectorAll('.tabla-registros tbody tr').forEach(f => 
+            f.classList.remove('fila-activa')
+        );
+        
+        // Agregar clase activa a la fila seleccionada
         const fila = document.getElementById('fila-' + id);
-        fila.classList.add('fila-activa');
+        if (fila) {
+            fila.classList.add('fila-activa');
+        }
+        
+        // Mostrar formulario y actualizar ID mostrado
         document.getElementById('formularioEdicion').style.display = 'block';
         document.getElementById('idRegistroMostrado').textContent = 'PROD-' + String(id).padStart(3, '0');
         document.getElementById('idRegistro').value = id;
+        
+        // Cargar datos del registro en el formulario
         cargarDatosRegistro(id);
+        
+        // Desplazar hasta el formulario
+        document.getElementById('formularioEdicion').scrollIntoView({ behavior: 'smooth' });
     }
-
+    
     // Cargar datos en el formulario
     function cargarDatosRegistro(id) {
         const r = datosRegistros.find(item => item.id === id);
         if (!r) return;
+        
         document.getElementById('sectorModificar').value = r.sector;
         document.getElementById('fechaModificar').value = r.fecha;
         document.getElementById('exportacionModificar').value = r.exportacion;
         document.getElementById('nacionalModificar').value = r.nacional;
         document.getElementById('desechoModificar').value = r.desecho;
+        
         actualizarTotalCajas();
     }
-
+    
     // Actualizar total de cajas en el formulario
     function actualizarTotalCajas() {
         const e = parseInt(document.getElementById('exportacionModificar').value) || 0;
         const n = parseInt(document.getElementById('nacionalModificar').value) || 0;
         const d = parseInt(document.getElementById('desechoModificar').value) || 0;
-        document.getElementById('totalCajasModificar').textContent = e + n + d;
-        document.getElementById('totalCajasModificar2').value = e + n + d;
+        const total = e + n + d;
+        
+        document.getElementById('totalCajasModificar').textContent = total;
+        document.getElementById('totalCajasModificar2').value = total;
     }
-
+    
     // Cancelar edición
     function cancelarEdicion() {
         document.getElementById('formularioEdicion').style.display = 'none';
-        document.querySelectorAll('.tabla-registros tbody tr').forEach(f => f.classList.remove('fila-activa'));
+        document.querySelectorAll('.tabla-registros tbody tr').forEach(f => 
+            f.classList.remove('fila-activa')
+        );
+        document.getElementById('formularioModificar').reset();
     }
-
-    // Filtros y búsqueda - CORREGIDO
+    
+    // Filtrar tabla
     function filtrarTabla() {
-        const fs = document.getElementById('filtroSector').value.toLowerCase();
-        const ff = document.getElementById('filtroFecha').value;
+        const busqueda = document.getElementById('buscarRegistro').value.toLowerCase();
+        const sectorSeleccionado = document.getElementById('filtroSector').value;
+        const fechaSeleccionada = document.getElementById('filtroFecha').value;
+        
         const hoyISO = getLocalISODate();
         const inicioSemanaISO = getStartOfWeekDate();
         const inicioMesISO = getStartOfMonthDate();
         
-        const tbody = document.querySelectorAll('.tabla-registros tbody tr');
-        tbody.forEach(f => {
-            const cols = f.cells;
-            let show = true;
+        document.querySelectorAll('.tabla-registros tbody tr').forEach(fila => {
+            // Ignorar fila de "No hay registros"
+            if (fila.cells.length === 1) return;
             
-            // Filtro por sector
-            if (fs && cols[1].textContent.toLowerCase() !== formatSectorText(fs).toLowerCase()) {
-                show = false;
-            }
+            let mostrar = true;
             
-            // Filtro por fecha - usamos la fecha ISO guardada en data-fecha
-            if (ff && show) {
-                const filaFechaISO = f.dataset.fecha;
-                
-                if (ff === 'hoy' && filaFechaISO !== hoyISO) {
-                    show = false;
-                } else if (ff === 'semana' && filaFechaISO < inicioSemanaISO) {
-                    show = false;
-                } else if (ff === 'mes' && filaFechaISO < inicioMesISO) {
-                    show = false;
+            // Filtro por texto de búsqueda
+            if (busqueda) {
+                const textoFila = fila.textContent.toLowerCase();
+                if (!textoFila.includes(busqueda)) {
+                    mostrar = false;
                 }
             }
             
-            f.style.display = show ? '' : 'none';
+            // Filtro por sector
+            if (mostrar && sectorSeleccionado) {
+                const sectorReal = datosRegistros.find(r => r.id == fila.dataset.id)?.sector;
+                if (sectorReal !== sectorSeleccionado) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por fecha
+            if (mostrar && fechaSeleccionada) {
+                const filaFechaISO = fila.dataset.fecha;
+                
+                if (fechaSeleccionada === 'hoy' && filaFechaISO !== hoyISO) {
+                    mostrar = false;
+                } else if (fechaSeleccionada === 'semana' && filaFechaISO < inicioSemanaISO) {
+                    mostrar = false;
+                } else if (fechaSeleccionada === 'mes' && filaFechaISO < inicioMesISO) {
+                    mostrar = false;
+                }
+            }
+            
+            // Mostrar u ocultar fila según resultado de filtros
+            fila.style.display = mostrar ? '' : 'none';
         });
     }
-
+    
+    // Inicialización cuando el DOM está listo
     document.addEventListener('DOMContentLoaded', () => {
+        // Inicializar selects de sectores
         populateSectorSelects();
+        
+        // Generar tabla con datos
         generarTabla();
-        document.getElementById('buscarRegistro').addEventListener('input', e => {
-            const q = e.target.value.toLowerCase();
-            document.querySelectorAll('.tabla-registros tbody tr')
-                .forEach(f => f.style.display = f.textContent.toLowerCase().includes(q) ? '' : 'none');
-        });
+        
+        // Eventos para filtros
+        document.getElementById('buscarRegistro').addEventListener('input', filtrarTabla);
         document.getElementById('filtroSector').addEventListener('change', filtrarTabla);
         document.getElementById('filtroFecha').addEventListener('change', filtrarTabla);
+        
+        // Validación del formulario
+// Validación del formulario
+        document.getElementById('formularioModificar').addEventListener('submit', function(e) {
+            const exportacion = parseInt(document.getElementById('exportacionModificar').value) || 0;
+            const nacional = parseInt(document.getElementById('nacionalModificar').value) || 0;
+            const desecho = parseInt(document.getElementById('desechoModificar').value) || 0;
+            
+            // Verificar que al menos uno de los valores de calidad sea mayor que cero
+            if (exportacion <= 0 && nacional <= 0 && desecho <= 0) {
+                e.preventDefault();
+                alert('Debe ingresar al menos un valor de calidad mayor a cero');
+                return false;
+            }
+            
+            // Verificar que el total sea mayor que cero
+            if (exportacion + nacional + desecho <= 0) {
+                e.preventDefault();
+                alert('El total de cajas debe ser mayor a cero');
+                return false;
+            }
+            
+            // Actualizar el campo oculto del total antes de enviar
+            document.getElementById('totalCajasModificar2').value = exportacion + nacional + desecho;
+            
+            return true;
+        });
+        
+        // Inicializar botones de paginación
+        document.querySelectorAll('.btn-pagina').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Quitar clase activa de todos los botones
+                document.querySelectorAll('.btn-pagina').forEach(b => b.classList.remove('activa'));
+                // Agregar clase activa al botón clickeado
+                this.classList.add('activa');
+                // Aquí se implementaría la lógica de paginación
+            });
+        });
+        
+        // Inicializar botón de exportar
+        document.querySelector('.btn-exportar').addEventListener('click', function() {
+            // Función para exportar datos a Excel o CSV
+            exportarDatos();
+        });
     });
+    
+    // Función para exportar datos (placeholder - implementar según necesidades)
+    function exportarDatos() {
+        alert('Funcionalidad de exportación en desarrollo');
+        // Aquí se implementaría la lógica para exportar a Excel, CSV, etc.
+    }
 </script>
 </body>
 </html>
