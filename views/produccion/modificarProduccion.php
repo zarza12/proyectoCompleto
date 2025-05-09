@@ -326,7 +326,7 @@ $sectoresJSON = json_encode($listarSectores);
             o1.textContent = opt.label;
             filtro.appendChild(o1);
             const o2 = o1.cloneNode(true);
-            modificar.appendChild(o1);
+            modificar.appendChild(o2);
         });
     }
 
