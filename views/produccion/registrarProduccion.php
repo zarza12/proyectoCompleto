@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include_once  '../../controllers/daoProduccion.php';
 include_once  '../../models/Produccion.php';
+include_once  '../../controllers/daoSector.php';
 
 if (isset($_POST['registrarProduccion']) && $_POST['registrarProduccion'] === 'registrarProduccion') {
     // Recibir datos del formulario en PHP
@@ -42,6 +43,10 @@ if (isset($_POST['registrarProduccion']) && $_POST['registrarProduccion'] === 'r
        
     }
 }
+
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
+$sectoresJSON = json_encode($listarSectores);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -451,12 +456,13 @@ if (isset($_POST['registrarProduccion']) && $_POST['registrarProduccion'] === 'r
     
     <script>
    // 1. Definir sectores en un array
-const sectores = [
+const sectores = <?php echo $sectoresJSON; ?>;
+/*[
     { value: 'sector_a', label: 'Sector A' },
     { value: 'sector_b', label: 'Sector B' },
     { value: 'sector_c', label: 'Sector C' },
     { value: 'sector_d', label: 'Sector D' }
-];
+];*/
 
 // 2. Función para poblar el <select>
 function populateSectores() {
