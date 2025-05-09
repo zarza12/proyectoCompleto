@@ -67,7 +67,8 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
 }
 $daoSectores2 = new daoSector();
 $listarSectores = $daoSectores2->listarSectores();
-$sectoresJSON = json_encode($listarSectores);
+$sectoresJSON = json_encode($listarSectores, JSON_UNESCAPED_UNICODE);
+
 
 ?>
 <!DOCTYPE html>
@@ -644,14 +645,14 @@ $sectoresJSON = json_encode($listarSectores);
   </div>
   
   <script>
-    // Datos de ejemplo para iniciar la tabla <?php echo $sectoresJSON; ?>;
+    // Datos de ejemplo para iniciar la tabla
     
-    let sectores = 
-    [
+    let sectores = <?php echo $sectoresJSON; ?>;
+    /*[
       { id: 1, fecha: '2025-04-09', nombre: 'Sector Norte', descripcion: 'Área de producción norte' },
       { id: 2, fecha: '2025-04-08', nombre: 'Sector Sur', descripcion: 'Área de producción sur' },
       { id: 3, fecha: '2025-04-07', nombre: 'Sector Este', descripcion: 'Área de distribución este' }
-    ];
+    ];*/
     
     // Función para formatear fecha (YYYY-MM-DD)
     function formatearFecha(fecha) {
