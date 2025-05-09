@@ -42,7 +42,7 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
   $descripcion = $_POST['descripcion'];
   $fecha       = $_POST['fecha'];
   $nombreJunto = str_replace(' ', '_', $nombre);
-  $editarId=$_POST['editarId'];
+  $editarId=$_POST['id'];
 
   // Pasar los 4 como parámetros
   $sector = new Sector($editarId, $nombre, $nombreJunto, $descripcion, $fecha);
@@ -55,13 +55,36 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
       echo "
       <script>
          
-              alert('Registro exitoso');
+              alert('Modifico exitoso');
               window.location.href = 'sectores.php';
           
       </script>";
       
   } else {
       mostrarMensaje("Error al insertar el registro.");
+     
+  }
+}
+
+
+if (isset($_POST['confirmarEliminar']) && $_POST['confirmarEliminar'] === 'confirmarEliminar') {
+  // Recibir datos del formulario en PHP
+
+  $eliminarId=$_POST['eliminarId'];
+
+
+  $daoSectores = new daoSector();
+  $registo = $daoSectores->eliminarSector($sector);
+
+  if ($registo) {
+      echo "
+      <script>
+              alert('Registro exitoso');
+              window.location.href = 'sectores.php';
+      </script>";
+      
+  } else {
+      mostrarMensaje("Error al modificar el registro.");
      
   }
 }
@@ -630,15 +653,16 @@ $sectoresJSON = json_encode($listarSectores);
         <h4><i class="fas fa-trash-alt"></i> Eliminar Sector</h4>
         <span class="cerrar-modal" id="cerrarModalEliminar">&times;</span>
       </div>
-      <div class="modal-cuerpo">
-        <p>¿Está seguro que desea eliminar el sector <span id="nombreSectorEliminar" class="id-sector"></span>?</p>
-        <p>Esta acción no se puede deshacer.</p>
-        <input type="hidden" id="eliminarId">
-      </div>
-      <form action="">
+      <form  method="POST" action="sectores.php">
+        <div class="modal-cuerpo">
+          <p>¿Está seguro que desea eliminar el sector <span id="nombreSectorEliminar" class="id-sector"></span>?</p>
+          <p>Esta acción no se puede deshacer.</p>
+          <input type="hidden" id="eliminarId" name="eliminarId">
+        </div>
+      
         <div class="modal-pie">
           <button type="button" class="boton-reset" id="cancelarEliminar"><i class="fas fa-times"></i> Cancelar</button>
-          <button type="button" class="boton-eliminar" id="confirmarEliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
+          <button type="button" class="boton-eliminar" id="confirmarEliminar"  value="confirmarEliminar" name="confirmarEliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
         </div>
       </form>
     </div>
