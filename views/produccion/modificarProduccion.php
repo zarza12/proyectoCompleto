@@ -322,8 +322,8 @@ $sectoresJSON = json_encode($listarSectores);
         const modificar = document.getElementById('sectorModificar');
         sectores.forEach(opt => {
             const o1 = document.createElement('option');
-            o1.value = opt.value;
-            o1.textContent = opt.label;
+            o1.value = opt.label;
+            o1.textContent = opt.value;
             filtro.appendChild(o1);
             const o2 = o1.cloneNode(true);
             modificar.appendChild(o2);
