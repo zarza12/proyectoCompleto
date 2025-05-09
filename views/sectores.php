@@ -662,7 +662,7 @@ $sectoresJSON = json_encode($listarSectores);
       
         <div class="modal-pie">
           <button type="button" class="boton-reset" id="cancelarEliminar"><i class="fas fa-times"></i> Cancelar</button>
-          <button type="button" class="boton-eliminar" id="confirmarEliminar"  value="confirmarEliminar" name="confirmarEliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
+          <button type="submit" class="boton-eliminar" id="confirmarEliminar"  value="confirmarEliminar" name="confirmarEliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
         </div>
       </form>
     </div>
