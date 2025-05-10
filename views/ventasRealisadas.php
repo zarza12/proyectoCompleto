@@ -311,8 +311,8 @@ if (session_status() === PHP_SESSION_NONE) {
             <i class="fas fa-chart-line"></i> Predicción de Ventas (Machine Learning)
           </div>
           <div class="grafico-controles">
-            <button class="grafico-control activo" data-prediccion="mes">1 Mes</button>
-            <button class="grafico-control" data-prediccion="semana">1 Semana</button>
+            <button class="grafico-control activo" data-prediccion="semana">1 Semana</button>
+            <button class="grafico-control" data-prediccion="mes">1 Mes</button>
             <button class="grafico-control" data-prediccion="anio">1 Año</button>
           </div>
         </div>
@@ -563,10 +563,10 @@ if (session_status() === PHP_SESSION_NONE) {
       };
     }
 
-    // Función para generar predicciones
-    function generarPredicciones() {
+    // Función para generar predicciones futuras
+    function generarPrediccionesFuturas() {
       // Obtener el tipo de predicción seleccionado
-      const tipoPrediccion = document.querySelector('.grafico-control[data-prediccion].activo')?.getAttribute('data-prediccion') || 'mes';
+      const tipoPrediccion = document.querySelector('.grafico-control[data-prediccion].activo')?.getAttribute('data-prediccion') || 'semana';
       
       // Crear modelos para cada categoría
       const modeloExp = crearModeloPrediccion(datosVentas, 'exportacion');
@@ -586,21 +586,33 @@ if (session_status() === PHP_SESSION_NONE) {
       // Determinar el período de predicción según la selección
       let periodosPrediccion = [];
       let etiquetas = [];
+      let fechasPrediccion = [];
+      
+      // Obtener la fecha actual para mostrar en el gráfico
+      const hoy = new Date();
+      const hoyStr = hoy.toISOString().split('T')[0];
+      
+      // Datos históricos para mostrar en el gráfico
+      const datosHistoricos = obtenerTendencia(datosVentas, 7); // Mostrar últimos 7 días históricos
       
       if (tipoPrediccion === 'semana') {
         // Predicción para 7 días (1 semana)
         for (let i = 1; i <= 7; i++) {
-          const fecha = new Date(ultimaFecha);
-          fecha.setDate(ultimaFecha.getDate() + i);
-          periodosPrediccion.push(diasUltimaFecha + i);
+          const fecha = new Date();
+          fecha.setDate(hoy.getDate() + i);
+          const diasDesdeInicio = diasUltimaFecha + i;
+          periodosPrediccion.push(diasDesdeInicio);
+          fechasPrediccion.push(fecha);
           etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
         }
       } else if (tipoPrediccion === 'mes') {
         // Predicción para 30 días (1 mes)
         for (let i = 1; i <= 30; i++) {
-          const fecha = new Date(ultimaFecha);
-          fecha.setDate(ultimaFecha.getDate() + i);
-          periodosPrediccion.push(diasUltimaFecha + i);
+          const fecha = new Date();
+          fecha.setDate(hoy.getDate() + i);
+          const diasDesdeInicio = diasUltimaFecha + i;
+          periodosPrediccion.push(diasDesdeInicio);
+          fechasPrediccion.push(fecha);
           // Mostrar solo algunas etiquetas para no saturar
           if (i % 5 === 0 || i === 1 || i === 30) {
             etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
@@ -609,11 +621,13 @@ if (session_status() === PHP_SESSION_NONE) {
           }
         }
       } else {
-        // Predicción para 365 días (1 año)
-        for (let i = 1; i <= 365; i += 30) { // Un punto por mes aproximadamente
-          const fecha = new Date(ultimaFecha);
-          fecha.setDate(ultimaFecha.getDate() + i);
-          periodosPrediccion.push(diasUltimaFecha + i);
+        // Predicción para 12 meses (1 año)
+        for (let i = 1; i <= 12; i++) {
+          const fecha = new Date();
+          fecha.setMonth(hoy.getMonth() + i);
+          const diasDesdeInicio = diasUltimaFecha + (i * 30); // Aproximación de 30 días por mes
+          periodosPrediccion.push(diasDesdeInicio);
+          fechasPrediccion.push(fecha);
           etiquetas.push(fecha.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }));
         }
       }
@@ -623,11 +637,14 @@ if (session_status() === PHP_SESSION_NONE) {
       const predNacional = periodosPrediccion.map(d => modeloNac.predict(d));
       const predDesecho = periodosPrediccion.map(d => modeloDes.predict(d));
       
+      // Combinar datos históricos con predicciones
+      const labelsCombinados = [...datosHistoricos.fechas, 'HOY', ...etiquetas];
+      
       return {
-        labels: etiquetas,
-        exportacion: predExportacion,
-        nacional: predNacional,
-        desecho: predDesecho,
+        labels: labelsCombinados,
+        exportacion: [...datosHistoricos.exportacion, null, ...predExportacion],
+        nacional: [...datosHistoricos.nacional, null, ...predNacional],
+        desecho: [...datosHistoricos.desecho, null, ...predDesecho],
         r2: {
           exportacion: modeloExp.r2,
           nacional: modeloNac.r2,
@@ -636,9 +653,9 @@ if (session_status() === PHP_SESSION_NONE) {
       };
     }
 
-    // Función para actualizar el gráfico de predicción
-    function actualizarGraficoPrediccion() {
-      const predData = generarPredicciones();
+    // Función para actualizar el gráfico de predicción futura
+    function actualizarGraficoPrediccionFutura() {
+      const predData = generarPrediccionesFuturas();
       const ctx = document.getElementById('graficoPrediccion').getContext('2d');
       
       // Si ya existe un gráfico, destruirlo antes de crear uno nuevo
@@ -646,36 +663,71 @@ if (session_status() === PHP_SESSION_NONE) {
         graficoPrediccion.destroy();
       }
       
+      // Configurar colores y estilos para las líneas
+      const colorExportacion = '#8E44AD';
+      const colorNacional = '#3498DB';
+      const colorDesecho = '#E74C3C';
+      
       graficoPrediccion = new Chart(ctx, {
         type: 'line',
         data: {
           labels: predData.labels,
           datasets: [
             {
+              label: 'Exportación (Histórico)',
+              data: predData.exportacion.slice(0, predData.labels.indexOf('HOY') + 1),
+              borderColor: colorExportacion,
+              backgroundColor: 'rgba(142, 68, 173, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: false
+            },
+            {
               label: 'Exportación (Predicción)',
-              data: predData.exportacion,
-              borderColor: '#8E44AD',
+              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.exportacion.slice(predData.labels.indexOf('HOY') + 1)),
+              borderColor: colorExportacion,
               backgroundColor: 'rgba(142, 68, 173, 0.1)',
               borderWidth: 3,
               borderDash: [5, 5],
+              tension: 0.3,
+              fill: false
+            },
+            {
+              label: 'Nacional (Histórico)',
+              data: predData.nacional.slice(0, predData.labels.indexOf('HOY') + 1),
+              borderColor: colorNacional,
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
               fill: false
             },
             {
               label: 'Nacional (Predicción)',
-              data: predData.nacional,
-              borderColor: '#3498DB',
+              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.nacional.slice(predData.labels.indexOf('HOY') + 1)),
+              borderColor: colorNacional,
               backgroundColor: 'rgba(52, 152, 219, 0.1)',
               borderWidth: 3,
               borderDash: [5, 5],
+              tension: 0.3,
+              fill: false
+            },
+            {
+              label: 'Desecho (Histórico)',
+              data: predData.desecho.slice(0, predData.labels.indexOf('HOY') + 1),
+              borderColor: colorDesecho,
+              backgroundColor: 'rgba(231, 76, 60, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
               fill: false
             },
             {
               label: 'Desecho (Predicción)',
-              data: predData.desecho,
-              borderColor: '#E74C3C',
+              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.desecho.slice(predData.labels.indexOf('HOY') + 1)),
+              borderColor: colorDesecho,
               backgroundColor: 'rgba(231, 76, 60, 0.1)',
               borderWidth: 3,
               borderDash: [5, 5],
+              tension: 0.3,
               fill: false
             }
           ]
@@ -698,8 +750,37 @@ if (session_status() === PHP_SESSION_NONE) {
             }
           },
           plugins: {
-            legend: { position: 'top' },
-            tooltip: { mode: 'index', intersect: false }
+            legend: { 
+              position: 'top',
+              labels: {
+                filter: function(item, chart) {
+                  // Mostrar solo las leyendas principales (no duplicadas)
+                  return !item.text.includes('(Histórico)') || 
+                         (item.text.includes('(Histórico)') && 
+                          !chart.data.datasets.some(ds => ds.label === item.text.replace('(Histórico)', '(Predicción)')));
+                }
+              }
+            },
+            tooltip: { 
+              mode: 'index', 
+              intersect: false,
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label = label.replace(' (Histórico)', '').replace(' (Predicción)', '');
+                  }
+                  if (context.parsed.y !== null) {
+                    label += ': ' + context.parsed.y;
+                  }
+                  return label;
+                }
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
           }
         }
       });
@@ -844,7 +925,7 @@ if (session_status() === PHP_SESSION_NONE) {
       }
       
       // Actualizar gráfico de predicción
-      actualizarGraficoPrediccion();
+      actualizarGraficoPrediccionFutura();
     }
 
     // Inicializar todo cuando el DOM esté cargado
@@ -901,7 +982,7 @@ if (session_status() === PHP_SESSION_NONE) {
             btn.classList.remove('activo');
           });
           this.classList.add('activo');
-          actualizarGraficoPrediccion();
+          actualizarGraficoPrediccionFutura();
         });
       });
       
@@ -910,7 +991,12 @@ if (session_status() === PHP_SESSION_NONE) {
       inicializarGraficoDistribucion();
       actualizarEstadisticas();
       actualizarTablaVentas();
-      actualizarGraficoPrediccion();
+      actualizarGraficoPrediccionFutura();
+      
+      // Establecer la fecha de hoy como valor predeterminado en el filtro de fecha
+      const hoy = new Date();
+      const hoyStr = hoy.toISOString().split('T')[0];
+      document.getElementById('fechaSeleccionada').value = hoyStr;
     });
   </script>
 </body>
