@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once '../../controllers/daoProduccion.php';
-
+include_once '../../controllers/daoSector.php';
 $daoProduccion = new daoProduccion();
 $listarProducciones = $daoProduccion->listarProduccion();
 
@@ -21,7 +21,11 @@ foreach ($listarProducciones as $produccion) {
     ];
 }
 $produccionesJSON = json_encode($produccionesJS);
-// No cierres el PHP, simplemente empieza el HTML
+
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
+$sectoresJSON = json_encode($listarSectores);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -528,12 +532,12 @@ $produccionesJSON = json_encode($produccionesJS);
         <div class="filtros-menu">
             <div class="filtro-item">
                 <label class="filtro-label">Desde:</label>
-                <input type="date" class="input-filtro" id="fechaInicio" value="2025-02-15" onchange="aplicarFiltros()">
+                <input type="date" class="input-filtro" id="fechaInicio" value="" onchange="aplicarFiltros()">
             </div>
             
             <div class="filtro-item">
                 <label class="filtro-label">Hasta:</label>
-                <input type="date" class="input-filtro" id="fechaFin" value="2025-03-16" onchange="aplicarFiltros()">
+                <input type="date" class="input-filtro" id="fechaFin" value="" onchange="aplicarFiltros()">
             </div>
             
             <div class="filtro-item">
@@ -647,13 +651,14 @@ $produccionesJSON = json_encode($produccionesJS);
 <!-- Script para la funcionalidad de la página -->
 <script>
     // Array de sectores con la nueva estructura
-    const sectores = [
+    const sectores =  <?php echo $sectoresJSON; ?>;
+    /*[
         { value: 'sector_a', label: 'Sector A' },
         { value: 'sector_ak', label: 'Sector Ak' },
         { value: 'sector_b', label: 'Sector B' },
         { value: 'sector_c', label: 'Sector C' },
         { value: 'sector_d', label: 'Sector D' }
-    ];
+    ];*/
     
     // Datos de producción completos
     const datosProduccion = <?php echo $produccionesJSON; ?>;
