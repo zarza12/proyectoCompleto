@@ -358,7 +358,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
   <!-- Scripts -->
   <script>
- // Variables globales para los gráficos
+// Variables globales para los gráficos
 let graficoTendencia = null;
 let graficoDistribucion = null;
 let graficoPrediccion = null;
@@ -800,10 +800,16 @@ function inicializarGraficoDistribucion(datos = datosVentas) {
 }
 // Función para aplicar filtros automáticamente
 function aplicarFiltros() {
+  console.log("Aplicando filtros...");
   const categoriaFiltro = document.getElementById('categoriaFiltro').value;
   const periodoFiltro = document.getElementById('periodoFiltro').value;
   const tipoFiltro = document.getElementById('tipoFiltro').value;
   const fechaSeleccionada = document.getElementById('fechaSeleccionada').value;
+  
+  console.log("Categoría:", categoriaFiltro);
+  console.log("Periodo:", periodoFiltro);
+  console.log("Tipo:", tipoFiltro);
+  console.log("Fecha seleccionada:", fechaSeleccionada);
   
   let datosFiltrados = [...datosVentas];
   
@@ -846,8 +852,7 @@ function aplicarFiltros() {
     graficoDistribucion.update();
   }
   
-  // Actualizar gráfico de predicción
-  actualizarGraficoPrediccion();
+  console.log("Datos filtrados:", datosFiltrados.length);
 }
 // Inicializar todo cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', function() {
@@ -855,18 +860,55 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('Datos de ventas cargados:', datosVentas);
   
   // Configurar eventos para los filtros (automáticos)
-  document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
-  document.getElementById('periodoFiltro').addEventListener('change', function() {
-    document.getElementById('fechaPersonalizada').style.display = 
-      this.value === 'personalizado' ? 'block' : 'none';
-    aplicarFiltros();
-  });
-  document.getElementById('categoriaFiltro').addEventListener('change', aplicarFiltros);
-  document.getElementById('fechaSeleccionada').addEventListener('change', aplicarFiltros);
+  const tipoFiltroSelect = document.getElementById('tipoFiltro');
+  const periodoFiltroSelect = document.getElementById('periodoFiltro');
+  const categoriaFiltroSelect = document.getElementById('categoriaFiltro');
+  const fechaSeleccionadaInput = document.getElementById('fechaSeleccionada');
+  
+  if (tipoFiltroSelect) {
+    tipoFiltroSelect.addEventListener('change', function() {
+      console.log('Cambio en tipo de filtro');
+      aplicarFiltros();
+    });
+  } else {
+    console.error('No se encontró el elemento tipoFiltro');
+  }
+  
+  if (periodoFiltroSelect) {
+    periodoFiltroSelect.addEventListener('change', function() {
+      console.log('Cambio en periodo de filtro');
+      if (document.getElementById('fechaPersonalizada')) {
+        document.getElementById('fechaPersonalizada').style.display = 
+          this.value === 'personalizado' ? 'block' : 'none';
+      }
+      aplicarFiltros();
+    });
+  } else {
+    console.error('No se encontró el elemento periodoFiltro');
+  }
+  
+  if (categoriaFiltroSelect) {
+    categoriaFiltroSelect.addEventListener('change', function() {
+      console.log('Cambio en categoría de filtro');
+      aplicarFiltros();
+    });
+  } else {
+    console.error('No se encontró el elemento categoriaFiltro');
+  }
+  
+  if (fechaSeleccionadaInput) {
+    fechaSeleccionadaInput.addEventListener('change', function() {
+      console.log('Cambio en fecha seleccionada');
+      aplicarFiltros();
+    });
+  } else {
+    console.error('No se encontró el elemento fechaSeleccionada');
+  }
   
   // Configurar eventos para los controles de los gráficos
   document.querySelectorAll('.grafico-control[data-periodo]').forEach(button => {
     button.addEventListener('click', function() {
+      console.log('Click en periodo de gráfico:', this.getAttribute('data-periodo'));
       document.querySelectorAll('.grafico-control[data-periodo]').forEach(btn => {
         btn.classList.remove('activo');
       });
@@ -877,31 +919,35 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.querySelectorAll('.grafico-control[data-tipo]').forEach(button => {
     button.addEventListener('click', function() {
+      console.log('Click en tipo de gráfico:', this.getAttribute('data-tipo'));
       document.querySelectorAll('.grafico-control[data-tipo]').forEach(btn => {
         btn.classList.remove('activo');
       });
       this.classList.add('activo');
       
       const tipo = this.getAttribute('data-tipo');
-      graficoDistribucion.config.type = tipo;
-      
-      // Actualizar opciones según el tipo de gráfico
-      if (tipo === 'bar') {
-        graficoDistribucion.options.scales = {
-          y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
-          x: { grid: { display: false } }
-        };
-      } else {
-        graficoDistribucion.options.scales = {};
+      if (graficoDistribucion) {
+        graficoDistribucion.config.type = tipo;
+        
+        // Actualizar opciones según el tipo de gráfico
+        if (tipo === 'bar') {
+          graficoDistribucion.options.scales = {
+            y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+          };
+        } else {
+          graficoDistribucion.options.scales = {};
+        }
+        
+        graficoDistribucion.update();
       }
-      
-      graficoDistribucion.update();
     });
   });
   
   // Configurar eventos para los controles de predicción
   document.querySelectorAll('.grafico-control[data-prediccion]').forEach(button => {
     button.addEventListener('click', function() {
+      console.log('Click en periodo de predicción:', this.getAttribute('data-prediccion'));
       document.querySelectorAll('.grafico-control[data-prediccion]').forEach(btn => {
         btn.classList.remove('activo');
       });
@@ -911,11 +957,14 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Inicializar gráficos y datos
+  console.log('Inicializando gráficos...');
   inicializarGraficoTendencia();
   inicializarGraficoDistribucion();
   actualizarEstadisticas();
   actualizarTablaVentas();
   actualizarGraficoPrediccion();
+  
+  console.log('Inicialización completa');
 });
   </script>
 </body>
