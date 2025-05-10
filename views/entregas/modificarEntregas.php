@@ -793,7 +793,7 @@ $listarJSON = json_encode($listar);
     </div>
     
     <script>
-        // Datos de ejemplo para simul?ar entregas
+        // Datos de ejemplo para simular entregas
         const entregasEjemplo = <?php echo $listarJSON; ?>
 
         // Función para cargar la tabla con los datos del array
@@ -945,44 +945,71 @@ $listarJSON = json_encode($listar);
             });
         }
 
-        // Función para guardar los cambios
-        function guardarCambios() {
-            const id = document.getElementById('idRegistro').value;
-            const calidad = document.getElementById('calidadProductoModificar').value;
-            const cantidad = document.getElementById('cantidadProductosModificar').value;
-            const empresa = document.getElementById('nombreEmpresaModificar').value;
-            const transportista = document.getElementById('nombreTransportistaModificar').value;
-            const usaEmail = document.getElementById('opcionEmailModificar').value;
-            const email = usaEmail === 'si' ? document.getElementById('emailCompradorModificar').value : '';
+        // Inicializar filtros
+        function inicializarFiltros() {
+            document.getElementById('filtroCalidad').addEventListener('change', filtrarTabla);
+            document.getElementById('filtroFecha').addEventListener('change', filtrarTabla);
+        }
+
+        function filtrarTabla() {
+            const filtroCalidad = document.getElementById('filtroCalidad').value.toLowerCase();
+            const filtroFecha = document.getElementById('filtroFecha').value;
+            const filas = document.querySelectorAll('.tabla-registros tbody tr');
             
-            // Validar campos
-            if (!calidad || !cantidad || !empresa || !transportista) {
-                alert('Por favor complete todos los campos requeridos');
-                return;
-            }
+            // Obtener la fecha actual para comparaciones
+            const fechaActual = new Date();
+            const diaActual = fechaActual.getDate().toString().padStart(2, '0');
+            const mesActual = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+            const anioActual = fechaActual.getFullYear();
             
-            // Buscar la entrega en el array
-            const entregaIndex = entregasEjemplo.findIndex(e => e.id === id);
+            // Formato DD/MM/YYYY
+            const hoy = `${diaActual}/${mesActual}/${anioActual}`;
             
-            if (entregaIndex !== -1) {
-                // Actualizar entrega en el array
-                entregasEjemplo[entregaIndex] = {
-                    ...entregasEjemplo[entregaIndex],
-                    calidad,
-                    cantidad: parseInt(cantidad),
-                    empresa,
-                    transportista,
-                    email
-                };
+            filas.forEach(fila => {
+                let mostrar = true;
                 
-                // Actualizar la tabla
-                cargarTablaEntregas();
+                // Filtrar por calidad
+                if (filtroCalidad) {
+                    const calidadCelda = fila.cells[2].textContent.toLowerCase();
+                    if (!calidadCelda.toLowerCase().includes(filtroCalidad)) {
+                        mostrar = false;
+                    }
+                }
                 
-                // Mantener la fila seleccionada
-                document.getElementById('fila-' + id).classList.add('fila-activa');
+                // Filtrar por fecha
+                if (filtroFecha && mostrar) {
+                    const fechaFila = fila.cells[1].textContent; // Formato DD/MM/YYYY
+                    
+                    // Convertir fecha de la fila a objeto Date para comparaciones
+                    const [diaFila, mesFila, anioFila] = fechaFila.split('/');
+                    const fechaFilaObj = new Date(anioFila, parseInt(mesFila) - 1, parseInt(diaFila));
+                    
+                    if (filtroFecha === 'hoy') {
+                        // Comprobar si la fecha es hoy
+                        if (fechaFila !== hoy) {
+                            mostrar = false;
+                        }
+                    } else if (filtroFecha === 'semana') {
+                        // Calcular inicio de semana (lunes de la semana actual)
+                        const inicioSemana = new Date(fechaActual);
+                        const diaSemana = fechaActual.getDay(); // 0 es domingo, 1 es lunes, ...
+                        const diferenciaDias = diaSemana === 0 ? 6 : diaSemana - 1; // Ajustar para que el inicio sea lunes
+                        inicioSemana.setDate(fechaActual.getDate() - diferenciaDias);
+                        
+                        // Comprobar si la fecha está dentro de la semana actual
+                        if (fechaFilaObj < inicioSemana || fechaFilaObj > fechaActual) {
+                            mostrar = false;
+                        }
+                    } else if (filtroFecha === 'mes') {
+                        // Comprobar si la fecha está dentro del mes actual
+                        if (parseInt(mesFila) !== (fechaActual.getMonth() + 1) || parseInt(anioFila) !== fechaActual.getFullYear()) {
+                            mostrar = false;
+                        }
+                    }
+                }
                 
-                alert('Entrega ' + id + ' actualizada correctamente');
-            }
+                fila.style.display = mostrar ? '' : 'none';
+            });
         }
 
         // Inicializar búsqueda
@@ -999,50 +1026,6 @@ $listarJSON = json_encode($listar);
                         fila.style.display = 'none';
                     }
                 });
-            });
-        }
-
-        // Inicializar filtros
-        function inicializarFiltros() {
-            document.getElementById('filtroCalidad').addEventListener('change', filtrarTabla);
-            document.getElementById('filtroFecha').addEventListener('change', filtrarTabla);
-        }
-
-        function filtrarTabla() {
-            const filtroCalidad = document.getElementById('filtroCalidad').value.toLowerCase();
-            const filtroFecha = document.getElementById('filtroFecha').value;
-            const filas = document.querySelectorAll('.tabla-registros tbody tr');
-            
-            filas.forEach(fila => {
-                let mostrar = true;
-                
-                // Filtrar por calidad
-                if (filtroCalidad) {
-                    const calidadCelda = fila.cells[2].textContent.toLowerCase();
-                    if (!calidadCelda.includes(filtroCalidad)) {
-                        mostrar = false;
-                    }
-                }
-                
-                // Filtrar por fecha 
-                if (filtroFecha) {
-                    const fechaFila = fila.cells[1].textContent; // Formato DD/MM/YYYY
-                    const hoy = '16/03/2025'; // Simular fecha actual
-                    
-                    if (filtroFecha === 'hoy' && fechaFila !== hoy) {
-                        mostrar = false;
-                    } else if (filtroFecha === 'semana') {
-                        // Considerar que esta semana incluye desde 13/03 hasta 16/03
-                        const fechasValidas = ['13/03/2025', '14/03/2025', '15/03/2025', '16/03/2025'];
-                        if (!fechasValidas.includes(fechaFila)) {
-                            mostrar = false;
-                        }
-                    } else if (filtroFecha === 'mes' && !fechaFila.includes('03/2025')) {
-                        mostrar = false;
-                    }
-                }
-                
-                fila.style.display = mostrar ? '' : 'none';
             });
         }
 
