@@ -477,14 +477,27 @@ function actualizarTablaVentas(datos = datosVentas) {
   const tablaBody = document.getElementById('tablaVentas');
   tablaBody.innerHTML = '';
   
+  // Si no hay datos, mostrar mensaje
+  if (datos.length === 0) {
+    const fila = document.createElement('tr');
+    fila.innerHTML = '<td colspan="5" style="text-align:center;">No hay datos disponibles</td>';
+    tablaBody.appendChild(fila);
+    
+    // Actualizar información de paginación
+    document.getElementById('registrosMostrados').textContent = '0-0';
+    document.getElementById('totalRegistros').textContent = '0';
+    return;
+  }
+  
   // Ordenar por fecha descendente
   const datosOrdenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
   
   // Calcular total general para porcentajes
   const totalGeneral = calcularTotales(datos).total;
   
-  // Mostrar solo los primeros 9 registros (para la paginación)
-  const registrosMostrar = datosOrdenados.slice(0, 9);
+  // Mostrar todos los registros (o limitar a 20 si hay muchos)
+  const maxRegistros = 20;
+  const registrosMostrar = datosOrdenados.slice(0, maxRegistros);
   
   registrosMostrar.forEach(venta => {
     const fila = document.createElement('tr');
@@ -511,6 +524,9 @@ function actualizarTablaVentas(datos = datosVentas) {
   // Actualizar información de paginación
   document.getElementById('registrosMostrados').textContent = `1-${registrosMostrar.length}`;
   document.getElementById('totalRegistros').textContent = datosOrdenados.length;
+  
+  // Añadir entrada en consola para depuración
+  console.log('Datos en tabla:', registrosMostrar);
 }
 // Función para crear modelo de predicción con regresión lineal
 function crearModeloPrediccion(datos, categoria) {
@@ -835,6 +851,9 @@ function aplicarFiltros() {
 }
 // Inicializar todo cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', function() {
+  // Verificar que datosVentas se haya llenado correctamente desde ventasRealizadas
+  console.log('Datos de ventas cargados:', datosVentas);
+  
   // Configurar eventos para los filtros (automáticos)
   document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
   document.getElementById('periodoFiltro').addEventListener('change', function() {
