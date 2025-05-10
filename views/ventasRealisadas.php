@@ -364,12 +364,20 @@ if (session_status() === PHP_SESSION_NONE) {
     let graficoPrediccion = null;
 
     // Datos proporcionados
-    const ventasRealizadas = [
-      { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 1 },
-      { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 4 },
-      { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 1 },
-      { fecha: '2025-03-03', exportacion: 80, nacional: 10, desecho: 3 }
-    ];
+const ventasRealizadas = [
+  { fecha: '2025-04-10', exportacion: 15, nacional: 25, desecho: 2 },
+  { fecha: '2025-04-09', exportacion: 12, nacional: 22, desecho: 1 },
+  { fecha: '2025-04-08', exportacion: 18, nacional: 28, desecho: 3 },
+  { fecha: '2025-04-07', exportacion: 10, nacional: 20, desecho: 2 },
+  { fecha: '2025-04-06', exportacion: 8, nacional: 18, desecho: 1 },
+  { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 1 },
+  { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 4 },
+  { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 1 },
+  { fecha: '2025-04-02', exportacion: 90, nacional: 25, desecho: 2 },
+  { fecha: '2025-04-01', exportacion: 80, nacional: 20, desecho: 3 },
+  { fecha: '2025-03-31', exportacion: 70, nacional: 18, desecho: 2 },
+  { fecha: '2025-03-30', exportacion: 60, nacional: 15, desecho: 1 }
+];
 
     // Transformar datos para que coincidan con la estructura esperada
     const datosVentas = [];
