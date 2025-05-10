@@ -1,6 +1,7 @@
 <?php
 include_once '../../controllers/daoProduccion.php';
 include_once  '../../models/Produccion.php';
+include_once '../../controllers/daoSector.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -43,7 +44,9 @@ foreach ($listarProducciones as $produccion) {
     ];
 }
 $produccionesJSON = json_encode($produccionesJS);
-
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
+$sectoresJSON = json_encode($listarSectores);
 
 ?>
 <!DOCTYPE html>
@@ -1288,12 +1291,14 @@ document.getElementById('confirmacionOverlay').addEventListener('click', functio
 
 // Función para poblar el filtro de sectores
 function populateFiltroSector() {
-    const sectores = [
+    const sectores = <?php echo $sectoresJSON; ?>;
+    
+    /* [
         { value: 'Sector A', label: 'Sector A' },
         { value: 'Sector B', label: 'Sector B' },
         { value: 'Sector C', label: 'Sector C' },
         { value: 'Sector D', label: 'Sector D' }
-    ];
+    ];*/
     
     const filtro = document.getElementById('filtroSector');
     // Limpia las opciones anteriores salvo la por defecto
