@@ -1030,8 +1030,8 @@ $listarJSON = json_encode($listar);
         cargarEntregas(datosEntregas);
         
         // Configurar los eventos de los filtros
-        document.getElementById('fechaInicio').addEventListener('change', filtrarEntregas);
-        document.getElementById('fechaFin').addEventListener('change', filtrarEntregas);
+        //document.getElementById('fechaInicio').addEventListener('change', filtrarEntregas);
+        //document.getElementById('fechaFin').addEventListener('change', filtrarEntregas);
         document.getElementById('filtroCalidad').addEventListener('change', filtrarEntregas);
     });
 </script>
