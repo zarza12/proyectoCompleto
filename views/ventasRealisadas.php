@@ -186,6 +186,32 @@ if (session_status() === PHP_SESSION_NONE) {
     .badge-exportacion { background-color: rgba(142, 68, 173, 0.1); color: #8E44AD; }
     .badge-nacional { background-color: rgba(52, 152, 219, 0.1); color: #3498DB; }
     .badge-desecho { background-color: rgba(231, 76, 60, 0.1); color: #E74C3C; }
+    
+    /* Estilos adicionales para la tabla de predicción */
+    .tabla-prediccion-container {
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .tabla-prediccion-container .tabla-registros th,
+    .tabla-prediccion-container .tabla-registros td {
+      padding: 12px 15px;
+      font-size: 14px;
+    }
+    
+    .tabla-prediccion-container .tabla-registros tr:nth-child(even) {
+      background-color: rgba(165, 105, 189, 0.05);
+    }
+    
+    /* Estilos para las badges de confiabilidad */
+    .precision-modelo .badge {
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: normal;
+    }
+    
     @media (max-width: 768px) {
       .filtros-contenedor { flex-direction: column; }
       .contenedor { padding: 20px 15px; padding-top: 70px; }
@@ -193,6 +219,7 @@ if (session_status() === PHP_SESSION_NONE) {
       .icono-seccion { font-size: 24px; padding: 8px; }
       .titulo-pagina h1 { font-size: 24px; }
       .tabla-cabecera { flex-direction: column; gap: 15px; align-items: flex-start; }
+      .fila-graficos { flex-direction: column; }
     }
   </style>
 </head>
@@ -303,9 +330,10 @@ if (session_status() === PHP_SESSION_NONE) {
       </div>
     </div>
     
-    <!-- Gráfico de predicción -->
+    <!-- Gráfico de predicción y tabla de datos -->
     <div class="fila-graficos">
-      <div class="grafico-contenedor" style="flex: 100%;">
+      <!-- Gráfico de predicción -->
+      <div class="grafico-contenedor" style="flex: 1;">
         <div class="grafico-cabecera">
           <div class="grafico-titulo">
             <i class="fas fa-chart-line"></i> Predicción de Ventas (Machine Learning)
@@ -318,6 +346,45 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
         <div class="canvas-container">
           <canvas id="graficoPrediccion"></canvas>
+        </div>
+      </div>
+      
+      <!-- Nueva tabla de predicción -->
+      <div class="grafico-contenedor" style="flex: 1;">
+        <div class="grafico-cabecera">
+          <div class="grafico-titulo">
+            <i class="fas fa-table"></i> Datos de Predicción
+          </div>
+          <div class="grafico-controles">
+            <button class="grafico-control" id="exportarPrediccion">
+              <i class="fas fa-download"></i> Exportar
+            </button>
+          </div>
+        </div>
+        <div class="tabla-prediccion-container">
+          <table class="tabla-registros" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Exportación</th>
+                <th>Nacional</th>
+                <th>Desecho</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPrediccion">
+              <!-- Se llenará dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Información sobre la precisión del modelo -->
+        <div class="precision-modelo" style="margin-top: 10px; font-size: 13px; color: #777; padding: 0 10px;">
+          <p>Confiabilidad del modelo (R²):</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
+            <span class="badge badge-exportacion">Exportación: <span id="r2-exportacion">0.00</span></span>
+            <span class="badge badge-nacional">Nacional: <span id="r2-nacional">0.00</span></span>
+            <span class="badge badge-desecho">Desecho: <span id="r2-desecho">0.00</span></span>
+          </div>
         </div>
       </div>
     </div>
@@ -522,6 +589,7 @@ if (session_status() === PHP_SESSION_NONE) {
     }
 
     // Función para crear modelo de predicción con regresión lineal
+   // Función para crear modelo de predicción con regresión lineal
     function crearModeloPrediccion(datos, categoria) {
       // Convertir fechas a días desde la primera fecha
       const fechasUnicas = [...new Set(datos.map(item => item.fecha))].sort();
@@ -575,7 +643,14 @@ if (session_status() === PHP_SESSION_NONE) {
       
       // Obtener fechas únicas ordenadas
       const fechasUnicas = [...new Set(datosVentas.map(item => item.fecha))].sort();
-      if (fechasUnicas.length < 1) return { labels: [], exportacion: [], nacional: [], desecho: [], r2: {} };
+      if (fechasUnicas.length < 1) return { 
+        labels: [], 
+        exportacion: [], 
+        nacional: [], 
+        desecho: [], 
+        fechasCompletas: [],
+        r2: {} 
+      };
       
       const primeraFecha = new Date(fechasUnicas[0]);
       const ultimaFecha = new Date(fechasUnicas[fechasUnicas.length - 1]);
@@ -586,6 +661,7 @@ if (session_status() === PHP_SESSION_NONE) {
       // Determinar el período de predicción según la selección
       let periodosPrediccion = [];
       let etiquetas = [];
+      let fechasCompletas = [];
       
       if (tipoPrediccion === 'semana') {
         // Predicción para 7 días (1 semana)
@@ -594,6 +670,7 @@ if (session_status() === PHP_SESSION_NONE) {
           fecha.setDate(ultimaFecha.getDate() + i);
           periodosPrediccion.push(diasUltimaFecha + i);
           etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
+          fechasCompletas.push(fecha.toISOString().split('T')[0]);
         }
       } else if (tipoPrediccion === 'mes') {
         // Predicción para 30 días (1 mes)
@@ -601,6 +678,7 @@ if (session_status() === PHP_SESSION_NONE) {
           const fecha = new Date(ultimaFecha);
           fecha.setDate(ultimaFecha.getDate() + i);
           periodosPrediccion.push(diasUltimaFecha + i);
+          fechasCompletas.push(fecha.toISOString().split('T')[0]);
           // Mostrar solo algunas etiquetas para no saturar
           if (i % 5 === 0 || i === 1 || i === 30) {
             etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
@@ -610,11 +688,12 @@ if (session_status() === PHP_SESSION_NONE) {
         }
       } else {
         // Predicción para 365 días (1 año)
-        for (let i = 1; i <= 365; i += 30) { // Un punto por mes aproximadamente
+        for (let i = 1; i <= 365; i += 15) { // Un punto por quincena aproximadamente
           const fecha = new Date(ultimaFecha);
           fecha.setDate(ultimaFecha.getDate() + i);
           periodosPrediccion.push(diasUltimaFecha + i);
-          etiquetas.push(fecha.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }));
+          etiquetas.push(fecha.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }));
+          fechasCompletas.push(fecha.toISOString().split('T')[0]);
         }
       }
       
@@ -625,15 +704,51 @@ if (session_status() === PHP_SESSION_NONE) {
       
       return {
         labels: etiquetas,
+        fechasCompletas: fechasCompletas,
         exportacion: predExportacion,
         nacional: predNacional,
         desecho: predDesecho,
         r2: {
-          exportacion: modeloExp.r2,
-          nacional: modeloNac.r2,
-          desecho: modeloDes.r2
+          exportacion: modeloExp.r2.toFixed(2),
+          nacional: modeloNac.r2.toFixed(2),
+          desecho: modeloDes.r2.toFixed(2)
         }
       };
+    }
+
+    // Nueva función para actualizar la tabla de predicción
+    function actualizarTablaPrediccion() {
+      const predData = generarPredicciones();
+      const tablaBody = document.getElementById('tablaPrediccion');
+      tablaBody.innerHTML = '';
+      
+      // Actualizar valores de R²
+      document.getElementById('r2-exportacion').textContent = predData.r2.exportacion;
+      document.getElementById('r2-nacional').textContent = predData.r2.nacional;
+      document.getElementById('r2-desecho').textContent = predData.r2.desecho;
+      
+      // Llenar la tabla con los datos de predicción
+      predData.fechasCompletas.forEach((fecha, index) => {
+        const fila = document.createElement('tr');
+        const exportacion = predData.exportacion[index] || 0;
+        const nacional = predData.nacional[index] || 0;
+        const desecho = predData.desecho[index] || 0;
+        const total = exportacion + nacional + desecho;
+        
+        // Formatear la fecha para mostrar
+        const fechaObj = new Date(fecha);
+        const fechaFormateada = `${fechaObj.getDate()}/${fechaObj.getMonth() + 1}/${fechaObj.getFullYear()}`;
+        
+        fila.innerHTML = `
+          <td>${fechaFormateada}</td>
+          <td>${exportacion}</td>
+          <td>${nacional}</td>
+          <td>${desecho}</td>
+          <td><strong>${total}</strong></td>
+        `;
+        
+        tablaBody.appendChild(fila);
+      });
     }
 
     // Función para actualizar el gráfico de predicción
@@ -703,6 +818,37 @@ if (session_status() === PHP_SESSION_NONE) {
           }
         }
       });
+      
+      // Actualizar también la tabla de predicción
+      actualizarTablaPrediccion();
+    }
+
+    // Función para exportar los datos de predicción a CSV
+    function exportarPrediccionCSV() {
+      const predData = generarPredicciones();
+      let csvContent = "data:text/csv;charset=utf-8,";
+      
+      // Encabezados
+      csvContent += "Fecha,Exportación,Nacional,Desecho,Total\n";
+      
+      // Datos
+      predData.fechasCompletas.forEach((fecha, index) => {
+        const exportacion = predData.exportacion[index] || 0;
+        const nacional = predData.nacional[index] || 0;
+        const desecho = predData.desecho[index] || 0;
+        const total = exportacion + nacional + desecho;
+        
+        csvContent += `${fecha},${exportacion},${nacional},${desecho},${total}\n`;
+      });
+      
+      // Crear enlace de descarga
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `prediccion_ventas_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // Función para inicializar gráfico de tendencia
@@ -904,6 +1050,9 @@ if (session_status() === PHP_SESSION_NONE) {
           actualizarGraficoPrediccion();
         });
       });
+      
+      // Añadir evento para exportar los datos de predicción
+      document.getElementById('exportarPrediccion').addEventListener('click', exportarPrediccionCSV);
       
       // Inicializar gráficos y datos
       inicializarGraficoTendencia();
