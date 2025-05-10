@@ -358,12 +358,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
   <!-- Scripts -->
   <script>
-    // Variables globales para los gráficos
-    let graficoTendencia = null;
-    let graficoDistribucion = null;
-    let graficoPrediccion = null;
+   // Variables globales para los gráficos
+let graficoTendencia = null;
+let graficoDistribucion = null;
+let graficoPrediccion = null;
 
-    // Datos proporcionados
+// Datos proporcionados
 const ventasRealizadas = [
   { fecha: '2025-04-10', exportacion: 15, nacional: 25, desecho: 2 },
   { fecha: '2025-04-09', exportacion: 12, nacional: 22, desecho: 1 },
@@ -379,633 +379,679 @@ const ventasRealizadas = [
   { fecha: '2025-03-30', exportacion: 60, nacional: 15, desecho: 1 }
 ];
 
-    // Transformar datos para que coincidan con la estructura esperada
-    const datosVentas = [];
+// Transformar datos para que coincidan con la estructura esperada
+const datosVentas = [];
 
-    // Procesar ventasRealizadas
-    ventasRealizadas.forEach(venta => {
-      if (venta.exportacion > 0) {
-        datosVentas.push({
-          id: `VE-${venta.fecha.replace(/-/g, '').substring(2)}`,
-          fecha: venta.fecha,
-          categoria: 'exportacion',
-          cantidad: venta.exportacion
-        });
-      }
-      if (venta.nacional > 0) {
-        datosVentas.push({
-          id: `VN-${venta.fecha.replace(/-/g, '').substring(2)}`,
-          fecha: venta.fecha,
-          categoria: 'nacional',
-          cantidad: venta.nacional
-        });
-      }
-      if (venta.desecho > 0) {
-        datosVentas.push({
-          id: `VD-${venta.fecha.replace(/-/g, '').substring(2)}`,
-          fecha: venta.fecha,
-          categoria: 'desecho',
-          cantidad: venta.desecho
-        });
-      }
+// Procesar ventasRealizadas
+ventasRealizadas.forEach(venta => {
+  if (venta.exportacion > 0) {
+    datosVentas.push({
+      id: `VE-${venta.fecha.replace(/-/g, '').substring(2)}`,
+      fecha: venta.fecha,
+      categoria: 'exportacion',
+      cantidad: venta.exportacion
     });
+  }
+  if (venta.nacional > 0) {
+    datosVentas.push({
+      id: `VN-${venta.fecha.replace(/-/g, '').substring(2)}`,
+      fecha: venta.fecha,
+      categoria: 'nacional',
+      cantidad: venta.nacional
+    });
+  }
+  if (venta.desecho > 0) {
+    datosVentas.push({
+      id: `VD-${venta.fecha.replace(/-/g, '').substring(2)}`,
+      fecha: venta.fecha,
+      categoria: 'desecho',
+      cantidad: venta.desecho
+    });
+  }
+});
 
-    // Calcular totales para las tarjetas de estadísticas
-    function calcularTotales(datos = datosVentas) {
-      const totalExportacion = datos
-        .filter(v => v.categoria === 'exportacion')
-        .reduce((sum, v) => sum + v.cantidad, 0);
-      
-      const totalNacional = datos
-        .filter(v => v.categoria === 'nacional')
-        .reduce((sum, v) => sum + v.cantidad, 0);
-      
-      const totalDesecho = datos
-        .filter(v => v.categoria === 'desecho')
-        .reduce((sum, v) => sum + v.cantidad, 0);
-      
-      const totalGeneral = totalExportacion + totalNacional + totalDesecho;
-      
-      return {
-        total: totalGeneral,
-        exportacion: totalExportacion,
-        nacional: totalNacional,
-        desecho: totalDesecho
-      };
+// Calcular totales para las tarjetas de estadísticas
+function calcularTotales(datos = datosVentas) {
+  const totalExportacion = datos
+    .filter(v => v.categoria === 'exportacion')
+    .reduce((sum, v) => sum + v.cantidad, 0);
+  
+  const totalNacional = datos
+    .filter(v => v.categoria === 'nacional')
+    .reduce((sum, v) => sum + v.cantidad, 0);
+  
+  const totalDesecho = datos
+    .filter(v => v.categoria === 'desecho')
+    .reduce((sum, v) => sum + v.cantidad, 0);
+  
+  const totalGeneral = totalExportacion + totalNacional + totalDesecho;
+  
+  return {
+    total: totalGeneral,
+    exportacion: totalExportacion,
+    nacional: totalNacional,
+    desecho: totalDesecho
+  };
+}
+
+// Actualizar tarjetas de estadísticas
+function actualizarEstadisticas(datos = datosVentas) {
+  const totales = calcularTotales(datos);
+  
+  document.getElementById('totalVentas').textContent = totales.total;
+  document.getElementById('totalExportacion').textContent = totales.exportacion;
+  document.getElementById('totalNacional').textContent = totales.nacional;
+  document.getElementById('totalDesecho').textContent = totales.desecho;
+}
+
+// Función para obtener datos de tendencia
+function obtenerTendencia(datos = datosVentas, dias = 7) {
+  // Ordenar por fecha
+  const datosOrdenados = [...datos].sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  
+  // Obtener fechas únicas
+  const fechasUnicas = [...new Set(datosOrdenados.map(item => item.fecha))].sort();
+  
+  // Tomar las últimas N fechas
+  const ultimasFechas = fechasUnicas.slice(-dias);
+  
+  const fechas = [], exportacion = [], nacional = [], desecho = [];
+  
+  ultimasFechas.forEach(fecha => {
+    const ventasDelDia = datosOrdenados.filter(item => item.fecha === fecha);
+    const [year, month, day] = fecha.split('-');
+    fechas.push(`${day}/${month}`);
+    
+    let totalExp = 0, totalNac = 0, totalDes = 0;
+    ventasDelDia.forEach(venta => {
+      if (venta.categoria === 'exportacion') totalExp += venta.cantidad;
+      else if (venta.categoria === 'nacional') totalNac += venta.cantidad;
+      else if (venta.categoria === 'desecho') totalDes += venta.cantidad;
+    });
+    
+    exportacion.push(totalExp);
+    nacional.push(totalNac);
+    desecho.push(totalDes);
+  });
+  
+  return { fechas, exportacion, nacional, desecho };
+}
+
+// Función para obtener datos de distribución
+function obtenerDistribucion(datos = datosVentas) {
+  const totales = calcularTotales(datos);
+  
+  return {
+    labels: ['Exportación', 'Nacional', 'Desecho'],
+    valores: [totales.exportacion, totales.nacional, totales.desecho],
+    colores: ['#8E44AD', '#3498DB', '#E74C3C']
+  };
+}
+
+// Función para actualizar la tabla de ventas
+function actualizarTablaVentas(datos = datosVentas) {
+  const tablaBody = document.getElementById('tablaVentas');
+  tablaBody.innerHTML = '';
+  
+  // Ordenar por fecha descendente
+  const datosOrdenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  
+  // Calcular total general para porcentajes
+  const totalGeneral = calcularTotales(datos).total;
+  
+  // Mostrar solo los primeros 9 registros (para la paginación)
+  const registrosMostrar = datosOrdenados.slice(0, 9);
+  
+  registrosMostrar.forEach(venta => {
+    const fila = document.createElement('tr');
+    const [year, month, day] = venta.fecha.split('-');
+    const fechaFormateada = `${day}/${month}/${year}`;
+    const porcentaje = totalGeneral > 0 ? ((venta.cantidad / totalGeneral) * 100).toFixed(1) : 0;
+    
+    const nombreCategoria = venta.categoria === 'exportacion' ? 'Exportación' :
+                          venta.categoria === 'nacional' ? 'Nacional' : 'Desecho';
+    
+    const badgeClass = `badge badge-${venta.categoria}`;
+    
+    fila.innerHTML = `
+      <td>${fechaFormateada}</td>
+      <td><span class="${badgeClass}">${nombreCategoria}</span></td>
+      <td>${venta.cantidad}</td>
+      <td>${porcentaje}%</td>
+      <td>#${venta.id}</td>
+    `;
+    
+    tablaBody.appendChild(fila);
+  });
+  
+  // Actualizar información de paginación
+  document.getElementById('registrosMostrados').textContent = `1-${registrosMostrar.length}`;
+  document.getElementById('totalRegistros').textContent = datosOrdenados.length;
+}
+
+// Función para crear modelo de predicción con regresión lineal
+function crearModeloPrediccion(datos, categoria) {
+  // Convertir fechas a días desde la primera fecha
+  const fechasUnicas = [...new Set(datos.map(item => item.fecha))].sort();
+  if (fechasUnicas.length < 2) {
+    // No hay suficientes datos para crear un modelo
+    return {
+      predict: () => 0,
+      r2: 0,
+      string: 'No hay suficientes datos'
+    };
+  }
+
+  const primeraFecha = new Date(fechasUnicas[0]);
+  
+  // Preparar datos para la regresión
+  const puntos = [];
+  
+  // Agrupar ventas por fecha para la categoría seleccionada
+  fechasUnicas.forEach(fecha => {
+    const ventasDia = datos.filter(v => v.fecha === fecha && v.categoria === categoria);
+    let totalDia = 0;
+    
+    if (ventasDia.length > 0) {
+      totalDia = ventasDia.reduce((sum, v) => sum + v.cantidad, 0);
     }
+    
+    const fechaObj = new Date(fecha);
+    const diasDesdeInicio = (fechaObj - primeraFecha) / (1000 * 60 * 60 * 24);
+    
+    puntos.push([diasDesdeInicio, totalDia]);
+  });
+  
+  // Aplicar regresión lineal solo si hay suficientes puntos
+  if (puntos.length < 2) {
+    return {
+      predict: () => 0,
+      r2: 0,
+      string: 'No hay suficientes datos'
+    };
+  }
 
-    // Actualizar tarjetas de estadísticas
-    function actualizarEstadisticas(datos = datosVentas) {
-      const totales = calcularTotales(datos);
-      
-      document.getElementById('totalVentas').textContent = totales.total;
-      document.getElementById('totalExportacion').textContent = totales.exportacion;
-      document.getElementById('totalNacional').textContent = totales.nacional;
-      document.getElementById('totalDesecho').textContent = totales.desecho;
+  // Usar regression.js para crear modelo
+  const resultado = regression.linear(puntos);
+  
+  // Mejorar el modelo con validación de valores negativos
+  return {
+    predict: (dias) => {
+      const prediccion = resultado.predict(dias)[1];
+      // Evitar predicciones negativas
+      return Math.max(0, Math.round(prediccion));
+    },
+    r2: resultado.r2,
+    string: resultado.string,
+    puntos: puntos // Guardar puntos para debugging
+  };
+}
+
+// Función para generar predicciones futuras
+function generarPrediccionesFuturas() {
+  // Obtener el tipo de predicción seleccionado
+  const tipoPrediccion = document.querySelector('.grafico-control[data-prediccion].activo')?.getAttribute('data-prediccion') || 'semana';
+  
+  // Crear modelos para cada categoría
+  const modeloExp = crearModeloPrediccion(datosVentas, 'exportacion');
+  const modeloNac = crearModeloPrediccion(datosVentas, 'nacional');
+  const modeloDes = crearModeloPrediccion(datosVentas, 'desecho');
+  
+  // Obtener fechas únicas ordenadas
+  const fechasUnicas = [...new Set(datosVentas.map(item => item.fecha))].sort();
+  if (fechasUnicas.length < 1) return { labels: [], exportacion: [], nacional: [], desecho: [], r2: {} };
+  
+  const primeraFecha = new Date(fechasUnicas[0]);
+  const ultimaFecha = new Date(fechasUnicas[fechasUnicas.length - 1]);
+  
+  // Calcular días desde la primera fecha para la última fecha
+  const diasUltimaFecha = (ultimaFecha - primeraFecha) / (1000 * 60 * 60 * 24);
+  
+  // Determinar el período de predicción según la selección
+  let periodosPrediccion = [];
+  let etiquetas = [];
+  let fechasPrediccion = [];
+  
+  // Obtener la fecha actual para mostrar en el gráfico
+  const hoy = new Date();
+  const hoyStr = hoy.toISOString().split('T')[0];
+  
+  // Datos históricos para mostrar en el gráfico
+  const datosHistoricos = obtenerTendencia(datosVentas, 7); // Mostrar últimos 7 días históricos
+  
+  if (tipoPrediccion === 'semana') {
+    // Predicción para 7 días (1 semana)
+    for (let i = 1; i <= 7; i++) {
+      const fecha = new Date();
+      fecha.setDate(hoy.getDate() + i);
+      const diasDesdeInicio = diasUltimaFecha + i;
+      periodosPrediccion.push(diasDesdeInicio);
+      fechasPrediccion.push(fecha);
+      etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
     }
-
-    // Función para obtener datos de tendencia
-    function obtenerTendencia(datos = datosVentas, dias = 7) {
-      // Ordenar por fecha
-      const datosOrdenados = [...datos].sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-      
-      // Obtener fechas únicas
-      const fechasUnicas = [...new Set(datosOrdenados.map(item => item.fecha))].sort();
-      
-      // Tomar las últimas N fechas
-      const ultimasFechas = fechasUnicas.slice(-dias);
-      
-      const fechas = [], exportacion = [], nacional = [], desecho = [];
-      
-      ultimasFechas.forEach(fecha => {
-        const ventasDelDia = datosOrdenados.filter(item => item.fecha === fecha);
-        const [year, month, day] = fecha.split('-');
-        fechas.push(`${day}/${month}`);
-        
-        let totalExp = 0, totalNac = 0, totalDes = 0;
-        ventasDelDia.forEach(venta => {
-          if (venta.categoria === 'exportacion') totalExp += venta.cantidad;
-          else if (venta.categoria === 'nacional') totalNac += venta.cantidad;
-          else if (venta.categoria === 'desecho') totalDes += venta.cantidad;
-        });
-        
-        exportacion.push(totalExp);
-        nacional.push(totalNac);
-        desecho.push(totalDes);
-      });
-      
-      return { fechas, exportacion, nacional, desecho };
-    }
-
-    // Función para obtener datos de distribución
-    function obtenerDistribucion(datos = datosVentas) {
-      const totales = calcularTotales(datos);
-      
-      return {
-        labels: ['Exportación', 'Nacional', 'Desecho'],
-        valores: [totales.exportacion, totales.nacional, totales.desecho],
-        colores: ['#8E44AD', '#3498DB', '#E74C3C']
-      };
-    }
-
-    // Función para actualizar la tabla de ventas
-    function actualizarTablaVentas(datos = datosVentas) {
-      const tablaBody = document.getElementById('tablaVentas');
-      tablaBody.innerHTML = '';
-      
-      // Ordenar por fecha descendente
-      const datosOrdenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-      
-      // Calcular total general para porcentajes
-      const totalGeneral = calcularTotales(datos).total;
-      
-      // Mostrar solo los primeros 9 registros (para la paginación)
-      const registrosMostrar = datosOrdenados.slice(0, 9);
-      
-      registrosMostrar.forEach(venta => {
-        const fila = document.createElement('tr');
-        const [year, month, day] = venta.fecha.split('-');
-        const fechaFormateada = `${day}/${month}/${year}`;
-        const porcentaje = totalGeneral > 0 ? ((venta.cantidad / totalGeneral) * 100).toFixed(1) : 0;
-        
-        const nombreCategoria = venta.categoria === 'exportacion' ? 'Exportación' :
-                              venta.categoria === 'nacional' ? 'Nacional' : 'Desecho';
-        
-        const badgeClass = `badge badge-${venta.categoria}`;
-        
-        fila.innerHTML = `
-          <td>${fechaFormateada}</td>
-          <td><span class="${badgeClass}">${nombreCategoria}</span></td>
-          <td>${venta.cantidad}</td>
-          <td>${porcentaje}%</td>
-          <td>#${venta.id}</td>
-        `;
-        
-        tablaBody.appendChild(fila);
-      });
-      
-      // Actualizar información de paginación
-      document.getElementById('registrosMostrados').textContent = `1-${registrosMostrar.length}`;
-      document.getElementById('totalRegistros').textContent = datosOrdenados.length;
-    }
-
-    // Función para crear modelo de predicción con regresión lineal
-    function crearModeloPrediccion(datos, categoria) {
-      // Convertir fechas a días desde la primera fecha
-      const fechasUnicas = [...new Set(datos.map(item => item.fecha))].sort();
-      if (fechasUnicas.length < 2) {
-        // No hay suficientes datos para crear un modelo
-        return {
-          predict: () => 0,
-          r2: 0,
-          string: 'No hay suficientes datos'
-        };
-      }
-
-      const primeraFecha = new Date(fechasUnicas[0]);
-      
-      // Preparar datos para la regresión
-      const puntos = datos
-        .filter(v => v.categoria === categoria)
-        .map(v => {
-          const fecha = new Date(v.fecha);
-          const diasDesdeInicio = (fecha - primeraFecha) / (1000 * 60 * 60 * 24);
-          return [diasDesdeInicio, v.cantidad];
-        });
-      
-      // Aplicar regresión lineal solo si hay suficientes puntos
-      if (puntos.length < 2) {
-        return {
-          predict: () => 0,
-          r2: 0,
-          string: 'No hay suficientes datos'
-        };
-      }
-
-      const resultado = regression.linear(puntos);
-      
-      return {
-        predict: (dias) => Math.max(0, Math.round(resultado.predict(dias)[1])),
-        r2: resultado.r2,
-        string: resultado.string
-      };
-    }
-
-    // Función para generar predicciones futuras
-    function generarPrediccionesFuturas() {
-      // Obtener el tipo de predicción seleccionado
-      const tipoPrediccion = document.querySelector('.grafico-control[data-prediccion].activo')?.getAttribute('data-prediccion') || 'semana';
-      
-      // Crear modelos para cada categoría
-      const modeloExp = crearModeloPrediccion(datosVentas, 'exportacion');
-      const modeloNac = crearModeloPrediccion(datosVentas, 'nacional');
-      const modeloDes = crearModeloPrediccion(datosVentas, 'desecho');
-      
-      // Obtener fechas únicas ordenadas
-      const fechasUnicas = [...new Set(datosVentas.map(item => item.fecha))].sort();
-      if (fechasUnicas.length < 1) return { labels: [], exportacion: [], nacional: [], desecho: [], r2: {} };
-      
-      const primeraFecha = new Date(fechasUnicas[0]);
-      const ultimaFecha = new Date(fechasUnicas[fechasUnicas.length - 1]);
-      
-      // Calcular días desde la primera fecha para la última fecha
-      const diasUltimaFecha = (ultimaFecha - primeraFecha) / (1000 * 60 * 60 * 24);
-      
-      // Determinar el período de predicción según la selección
-      let periodosPrediccion = [];
-      let etiquetas = [];
-      let fechasPrediccion = [];
-      
-      // Obtener la fecha actual para mostrar en el gráfico
-      const hoy = new Date();
-      const hoyStr = hoy.toISOString().split('T')[0];
-      
-      // Datos históricos para mostrar en el gráfico
-      const datosHistoricos = obtenerTendencia(datosVentas, 7); // Mostrar últimos 7 días históricos
-      
-      if (tipoPrediccion === 'semana') {
-        // Predicción para 7 días (1 semana)
-        for (let i = 1; i <= 7; i++) {
-          const fecha = new Date();
-          fecha.setDate(hoy.getDate() + i);
-          const diasDesdeInicio = diasUltimaFecha + i;
-          periodosPrediccion.push(diasDesdeInicio);
-          fechasPrediccion.push(fecha);
-          etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
-        }
-      } else if (tipoPrediccion === 'mes') {
-        // Predicción para 30 días (1 mes)
-        for (let i = 1; i <= 30; i++) {
-          const fecha = new Date();
-          fecha.setDate(hoy.getDate() + i);
-          const diasDesdeInicio = diasUltimaFecha + i;
-          periodosPrediccion.push(diasDesdeInicio);
-          fechasPrediccion.push(fecha);
-          // Mostrar solo algunas etiquetas para no saturar
-          if (i % 5 === 0 || i === 1 || i === 30) {
-            etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
-          } else {
-            etiquetas.push('');
-          }
-        }
+  } else if (tipoPrediccion === 'mes') {
+    // Predicción para 30 días (1 mes)
+    for (let i = 1; i <= 30; i++) {
+      const fecha = new Date();
+      fecha.setDate(hoy.getDate() + i);
+      const diasDesdeInicio = diasUltimaFecha + i;
+      periodosPrediccion.push(diasDesdeInicio);
+      fechasPrediccion.push(fecha);
+      // Mostrar solo algunas etiquetas para no saturar
+      if (i % 5 === 0 || i === 1 || i === 30) {
+        etiquetas.push(`${fecha.getDate()}/${fecha.getMonth() + 1}`);
       } else {
-        // Predicción para 12 meses (1 año)
-        for (let i = 1; i <= 12; i++) {
-          const fecha = new Date();
-          fecha.setMonth(hoy.getMonth() + i);
-          const diasDesdeInicio = diasUltimaFecha + (i * 30); // Aproximación de 30 días por mes
-          periodosPrediccion.push(diasDesdeInicio);
-          fechasPrediccion.push(fecha);
-          etiquetas.push(fecha.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }));
-        }
+        etiquetas.push('');
       }
-      
-      // Generar predicciones para cada categoría
-      const predExportacion = periodosPrediccion.map(d => modeloExp.predict(d));
-      const predNacional = periodosPrediccion.map(d => modeloNac.predict(d));
-      const predDesecho = periodosPrediccion.map(d => modeloDes.predict(d));
-      
-      // Combinar datos históricos con predicciones
-      const labelsCombinados = [...datosHistoricos.fechas, 'HOY', ...etiquetas];
-      
-      return {
-        labels: labelsCombinados,
-        exportacion: [...datosHistoricos.exportacion, null, ...predExportacion],
-        nacional: [...datosHistoricos.nacional, null, ...predNacional],
-        desecho: [...datosHistoricos.desecho, null, ...predDesecho],
-        r2: {
-          exportacion: modeloExp.r2,
-          nacional: modeloNac.r2,
-          desecho: modeloDes.r2
-        }
-      };
     }
+  } else {
+    // Predicción para 12 meses (1 año)
+    for (let i = 1; i <= 12; i++) {
+      const fecha = new Date();
+      fecha.setMonth(hoy.getMonth() + i);
+      const diasDesdeInicio = diasUltimaFecha + (i * 30); // Aproximación de 30 días por mes
+      periodosPrediccion.push(diasDesdeInicio);
+      fechasPrediccion.push(fecha);
+      etiquetas.push(fecha.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }));
+    }
+  }
+  
+  // Generar predicciones para cada categoría
+  const predExportacion = periodosPrediccion.map(d => modeloExp.predict(d));
+  const predNacional = periodosPrediccion.map(d => modeloNac.predict(d));
+  const predDesecho = periodosPrediccion.map(d => modeloDes.predict(d));
+  
+  // Combinar datos históricos con predicciones
+  const labelsCombinados = [...datosHistoricos.fechas, 'HOY', ...etiquetas];
+  
+  return {
+    labels: labelsCombinados,
+    exportacion: [...datosHistoricos.exportacion, null, ...predExportacion],
+    nacional: [...datosHistoricos.nacional, null, ...predNacional],
+    desecho: [...datosHistoricos.desecho, null, ...predDesecho],
+    r2: {
+      exportacion: modeloExp.r2,
+      nacional: modeloNac.r2,
+      desecho: modeloDes.r2
+    }
+  };
+}
 
-    // Función para actualizar el gráfico de predicción futura
-    function actualizarGraficoPrediccionFutura() {
-      const predData = generarPrediccionesFuturas();
-      const ctx = document.getElementById('graficoPrediccion').getContext('2d');
-      
-      // Si ya existe un gráfico, destruirlo antes de crear uno nuevo
-      if (graficoPrediccion) {
-        graficoPrediccion.destroy();
-      }
-      
-      // Configurar colores y estilos para las líneas
-      const colorExportacion = '#8E44AD';
-      const colorNacional = '#3498DB';
-      const colorDesecho = '#E74C3C';
-      
-      graficoPrediccion = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: predData.labels,
-          datasets: [
-            {
-              label: 'Exportación (Histórico)',
-              data: predData.exportacion.slice(0, predData.labels.indexOf('HOY') + 1),
-              borderColor: colorExportacion,
-              backgroundColor: 'rgba(142, 68, 173, 0.1)',
-              borderWidth: 2,
-              tension: 0.3,
-              fill: false
-            },
-            {
-              label: 'Exportación (Predicción)',
-              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.exportacion.slice(predData.labels.indexOf('HOY') + 1)),
-              borderColor: colorExportacion,
-              backgroundColor: 'rgba(142, 68, 173, 0.1)',
-              borderWidth: 3,
-              borderDash: [5, 5],
-              tension: 0.3,
-              fill: false
-            },
-            {
-              label: 'Nacional (Histórico)',
-              data: predData.nacional.slice(0, predData.labels.indexOf('HOY') + 1),
-              borderColor: colorNacional,
-              backgroundColor: 'rgba(52, 152, 219, 0.1)',
-              borderWidth: 2,
-              tension: 0.3,
-              fill: false
-            },
-            {
-              label: 'Nacional (Predicción)',
-              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.nacional.slice(predData.labels.indexOf('HOY') + 1)),
-              borderColor: colorNacional,
-              backgroundColor: 'rgba(52, 152, 219, 0.1)',
-              borderWidth: 3,
-              borderDash: [5, 5],
-              tension: 0.3,
-              fill: false
-            },
-            {
-              label: 'Desecho (Histórico)',
-              data: predData.desecho.slice(0, predData.labels.indexOf('HOY') + 1),
-              borderColor: colorDesecho,
-              backgroundColor: 'rgba(231, 76, 60, 0.1)',
-              borderWidth: 2,
-              tension: 0.3,
-              fill: false
-            },
-            {
-              label: 'Desecho (Predicción)',
-              data: Array(predData.labels.indexOf('HOY') + 1).fill(null).concat(predData.desecho.slice(predData.labels.indexOf('HOY') + 1)),
-              borderColor: colorDesecho,
-              backgroundColor: 'rgba(231, 76, 60, 0.1)',
-              borderWidth: 3,
-              borderDash: [5, 5],
-              tension: 0.3,
-              fill: false
-            }
-          ]
+// Función para actualizar el gráfico de predicción futura
+function actualizarGraficoPrediccionFutura() {
+  const predData = generarPrediccionesFuturas();
+  const ctx = document.getElementById('graficoPrediccion').getContext('2d');
+  
+  // Si ya existe un gráfico, destruirlo antes de crear uno nuevo
+  if (graficoPrediccion) {
+    graficoPrediccion.destroy();
+  }
+  
+  // Configurar colores y estilos para las líneas
+  const colorExportacion = '#8E44AD';
+  const colorNacional = '#3498DB';
+  const colorDesecho = '#E74C3C';
+  
+  // Encontrar el índice donde comienza la predicción
+  const hoyIndex = predData.labels.indexOf('HOY');
+  
+  // Preparar los datos históricos y de predicción
+  const exportacionHistorico = [];
+  const exportacionPrediccion = [];
+  const nacionalHistorico = [];
+  const nacionalPrediccion = [];
+  const desechoHistorico = [];
+  const desechoPrediccion = [];
+  
+  // Llenar los arrays con los datos adecuados
+  for (let i = 0; i < predData.labels.length; i++) {
+    if (i <= hoyIndex) {
+      // Datos históricos
+      exportacionHistorico[i] = predData.exportacion[i];
+      nacionalHistorico[i] = predData.nacional[i];
+      desechoHistorico[i] = predData.desecho[i];
+      // Vacíos para predicción
+      exportacionPrediccion[i] = null;
+      nacionalPrediccion[i] = null;
+      desechoPrediccion[i] = null;
+    } else {
+      // Vacíos para histórico
+      exportacionHistorico[i] = null;
+      nacionalHistorico[i] = null;
+      desechoHistorico[i] = null;
+      // Datos de predicción
+      exportacionPrediccion[i] = predData.exportacion[i];
+      nacionalPrediccion[i] = predData.nacional[i];
+      desechoPrediccion[i] = predData.desecho[i];
+    }
+  }
+  
+  graficoPrediccion = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: predData.labels,
+      datasets: [
+        {
+          label: 'Exportación (Histórico)',
+          data: exportacionHistorico,
+          borderColor: colorExportacion,
+          backgroundColor: 'rgba(142, 68, 173, 0.1)',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: false
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { 
-              beginAtZero: true, 
-              grid: { display: true, color: 'rgba(0,0,0,0.05)' } 
-            },
-            x: { 
-              grid: { display: false },
-              ticks: {
-                autoSkip: false,
-                maxRotation: 45,
-                minRotation: 45
-              }
-            }
-          },
-          plugins: {
-            legend: { 
-              position: 'top',
-              labels: {
-                filter: function(item, chart) {
-                  // Mostrar solo las leyendas principales (no duplicadas)
-                  return !item.text.includes('(Histórico)') || 
-                         (item.text.includes('(Histórico)') && 
-                          !chart.data.datasets.some(ds => ds.label === item.text.replace('(Histórico)', '(Predicción)')));
-                }
-              }
-            },
-            tooltip: { 
-              mode: 'index', 
-              intersect: false,
-              callbacks: {
-                label: function(context) {
-                  let label = context.dataset.label || '';
-                  if (label) {
-                    label = label.replace(' (Histórico)', '').replace(' (Predicción)', '');
-                  }
-                  if (context.parsed.y !== null) {
-                    label += ': ' + context.parsed.y;
-                  }
-                  return label;
-                }
-              }
-            }
-          },
-          interaction: {
-            intersect: false,
-            mode: 'index'
-          }
-        }
-      });
-    }
-
-    // Función para inicializar gráfico de tendencia
-    function inicializarGraficoTendencia(datos = datosVentas) {
-      const ctx = document.getElementById('graficoTendencia').getContext('2d');
-      const tendenciaData = obtenerTendencia(datos, 7);
-      
-      graficoTendencia = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: tendenciaData.fechas,
-          datasets: [
-            {
-              label: 'Exportación',
-              data: tendenciaData.exportacion,
-              borderColor: '#8E44AD',
-              backgroundColor: 'rgba(142, 68, 173, 0.1)',
-              borderWidth: 3,
-              tension: 0.3,
-              fill: true
-            },
-            {
-              label: 'Nacional',
-              data: tendenciaData.nacional,
-              borderColor: '#3498DB',
-              backgroundColor: 'rgba(52, 152, 219, 0.1)',
-              borderWidth: 3,
-              tension: 0.3,
-              fill: true
-            },
-            {
-              label: 'Desecho',
-              data: tendenciaData.desecho,
-              borderColor: '#E74C3C',
-              backgroundColor: 'rgba(231, 76, 60, 0.1)',
-              borderWidth: 3,
-              tension: 0.3,
-              fill: true
-            }
-          ]
+        {
+          label: 'Exportación (Predicción)',
+          data: exportacionPrediccion,
+          borderColor: colorExportacion,
+          backgroundColor: 'rgba(142, 68, 173, 0.1)',
+          borderWidth: 3,
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
-            x: { grid: { display: false } }
-          },
-          plugins: {
-            legend: { position: 'top' },
-            tooltip: { mode: 'index', intersect: false }
+        {
+          label: 'Nacional (Histórico)',
+          data: nacionalHistorico,
+          borderColor: colorNacional,
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Nacional (Predicción)',
+          data: nacionalPrediccion,
+          borderColor: colorNacional,
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 3,
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Desecho (Histórico)',
+          data: desechoHistorico,
+          borderColor: colorDesecho,
+          backgroundColor: 'rgba(231, 76, 60, 0.1)',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Desecho (Predicción)',
+          data: desechoPrediccion,
+          borderColor: colorDesecho,
+          backgroundColor: 'rgba(231, 76, 60, 0.1)',
+          borderWidth: 3,
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { 
+          beginAtZero: true, 
+          grid: { display: true, color: 'rgba(0,0,0,0.05)' } 
+        },
+        x: { 
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 45,
+            minRotation: 45
           }
         }
-      });
-    }
-
-    // Función para inicializar gráfico de distribución
-    function inicializarGraficoDistribucion(datos = datosVentas) {
-      const ctx = document.getElementById('graficoDistribucion').getContext('2d');
-      const distribucionData = obtenerDistribucion(datos);
-      
-      graficoDistribucion = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: distribucionData.labels,
-          datasets: [{
-            data: distribucionData.valores,
-            backgroundColor: distribucionData.colores,
-            borderWidth: 0
-          }]
+      },
+      plugins: {
+        legend: { 
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            boxWidth: 6
+          }
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'right' },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const label = context.label || '';
-                  const value = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = Math.round((value / total) * 100);
-                  return `${label}: ${value} (${percentage}%)`;
-                }
+        tooltip: { 
+          mode: 'index', 
+          intersect: false,
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label = label.replace(' (Histórico)', '').replace(' (Predicción)', '');
               }
+              if (context.parsed.y !== null) {
+                label += ': ' + context.parsed.y;
+              }
+              return label;
             }
           }
         }
-      });
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      }
     }
+  });
+}
 
-    // Función para aplicar filtros automáticamente
-    function aplicarFiltros() {
-      const categoriaFiltro = document.getElementById('categoriaFiltro').value;
-      const periodoFiltro = document.getElementById('periodoFiltro').value;
-      const tipoFiltro = document.getElementById('tipoFiltro').value;
-      const fechaSeleccionada = document.getElementById('fechaSeleccionada').value;
-      
-      let datosFiltrados = [...datosVentas];
-      
-      // Filtrar por categoría
-      if (categoriaFiltro !== 'todas') {
-        datosFiltrados = datosFiltrados.filter(v => v.categoria === categoriaFiltro);
+// Función para inicializar gráfico de tendencia
+function inicializarGraficoTendencia(datos = datosVentas) {
+  const ctx = document.getElementById('graficoTendencia').getContext('2d');
+  const tendenciaData = obtenerTendencia(datos, 7);
+  
+  graficoTendencia = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: tendenciaData.fechas,
+      datasets: [
+        {
+          label: 'Exportación',
+          data: tendenciaData.exportacion,
+          borderColor: '#8E44AD',
+          backgroundColor: 'rgba(142, 68, 173, 0.1)',
+          borderWidth: 3,
+          tension: 0.3,
+          fill: true
+        },
+        {
+          label: 'Nacional',
+          data: tendenciaData.nacional,
+          borderColor: '#3498DB',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 3,
+          tension: 0.3,
+          fill: true
+        },
+        {
+          label: 'Desecho',
+          data: tendenciaData.desecho,
+          borderColor: '#E74C3C',
+          backgroundColor: 'rgba(231, 76, 60, 0.1)',
+          borderWidth: 3,
+          tension: 0.3,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
+        x: { grid: { display: false } }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
       }
-      
-      // Filtrar por periodo
-      if (periodoFiltro === 'personalizado' && fechaSeleccionada) {
-        datosFiltrados = datosFiltrados.filter(v => v.fecha === fechaSeleccionada);
-      } else if (periodoFiltro === 'anterior') {
-        // Lógica simplificada para periodo anterior (día anterior)
-        const hoy = new Date();
-        const fechaAyer = new Date(hoy);
-        fechaAyer.setDate(hoy.getDate() - 1);
-        const fechaAyerStr = fechaAyer.toISOString().split('T')[0];
-        datosFiltrados = datosFiltrados.filter(v => v.fecha === fechaAyerStr);
-      }
-      
-      // Actualizar la interfaz con los datos filtrados
-      actualizarEstadisticas(datosFiltrados);
-      actualizarTablaVentas(datosFiltrados);
-      
-      // Actualizar gráficos con los datos filtrados
-      const periodoGrafico = document.querySelector('.grafico-control[data-periodo].activo')?.getAttribute('data-periodo') || 7;
-      const tendenciaData = obtenerTendencia(datosFiltrados, parseInt(periodoGrafico));
-      
-      if (graficoTendencia) {
-        graficoTendencia.data.labels = tendenciaData.fechas;
-        graficoTendencia.data.datasets[0].data = tendenciaData.exportacion;
-        graficoTendencia.data.datasets[1].data = tendenciaData.nacional;
-        graficoTendencia.data.datasets[2].data = tendenciaData.desecho;
-        graficoTendencia.update();
-      }
-      
-      const distribucionData = obtenerDistribucion(datosFiltrados);
-      if (graficoDistribucion) {
-        graficoDistribucion.data.datasets[0].data = distribucionData.valores;
-        graficoDistribucion.update();
-      }
-      
-      // Actualizar gráfico de predicción
-      actualizarGraficoPrediccionFutura();
     }
+  });
+}
 
-    // Inicializar todo cuando el DOM esté cargado
-    document.addEventListener('DOMContentLoaded', function() {
-      // Configurar eventos para los filtros (automáticos)
-      document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
-      document.getElementById('periodoFiltro').addEventListener('change', function() {
-        document.getElementById('fechaPersonalizada').style.display = 
-          this.value === 'personalizado' ? 'block' : 'none';
-        aplicarFiltros();
-      });
-      document.getElementById('categoriaFiltro').addEventListener('change', aplicarFiltros);
-      document.getElementById('fechaSeleccionada').addEventListener('change', aplicarFiltros);
-      
-      // Configurar eventos para los controles de los gráficos
-      document.querySelectorAll('.grafico-control[data-periodo]').forEach(button => {
-        button.addEventListener('click', function() {
-          document.querySelectorAll('.grafico-control[data-periodo]').forEach(btn => {
-            btn.classList.remove('activo');
-          });
-          this.classList.add('activo');
-          aplicarFiltros();
-        });
-      });
-      
-      document.querySelectorAll('.grafico-control[data-tipo]').forEach(button => {
-        button.addEventListener('click', function() {
-          document.querySelectorAll('.grafico-control[data-tipo]').forEach(btn => {
-            btn.classList.remove('activo');
-          });
-          this.classList.add('activo');
-          
-          const tipo = this.getAttribute('data-tipo');
-          graficoDistribucion.config.type = tipo;
-          
-          // Actualizar opciones según el tipo de gráfico
-          if (tipo === 'bar') {
-            graficoDistribucion.options.scales = {
-              y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
-              x: { grid: { display: false } }
-            };
-          } else {
-            graficoDistribucion.options.scales = {};
+// Función para inicializar gráfico de distribución
+function inicializarGraficoDistribucion(datos = datosVentas) {
+  const ctx = document.getElementById('graficoDistribucion').getContext('2d');
+  const distribucionData = obtenerDistribucion(datos);
+  
+  graficoDistribucion = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: distribucionData.labels,
+      datasets: [{
+        data: distribucionData.valores,
+        backgroundColor: distribucionData.colores,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = Math.round((value / total) * 100);
+              return `${label}: ${value} (${percentage}%)`;
+            }
           }
-          
-          graficoDistribucion.update();
-        });
+        }
+      }
+    }
+  });
+}
+
+// Función para aplicar filtros automáticamente
+function aplicarFiltros() {
+  const categoriaFiltro = document.getElementById('categoriaFiltro').value;
+  const periodoFiltro = document.getElementById('periodoFiltro').value;
+  const tipoFiltro = document.getElementById('tipoFiltro').value;
+  const fechaSeleccionada = document.getElementById('fechaSeleccionada').value;
+  
+  let datosFiltrados = [...datosVentas];
+  
+  // Filtrar por categoría
+  if (categoriaFiltro !== 'todas') {
+    datosFiltrados = datosFiltrados.filter(v => v.categoria === categoriaFiltro);
+  }
+  
+  // Filtrar por periodo
+  if (periodoFiltro === 'personalizado' && fechaSeleccionada) {
+    datosFiltrados = datosFiltrados.filter(v => v.fecha === fechaSeleccionada);
+  } else if (periodoFiltro === 'anterior') {
+    // Lógica simplificada para periodo anterior (día anterior)
+    const hoy = new Date();
+    const fechaAyer = new Date(hoy);
+    fechaAyer.setDate(hoy.getDate() - 1);
+    const fechaAyerStr = fechaAyer.toISOString().split('T')[0];
+    datosFiltrados = datosFiltrados.filter(v => v.fecha === fechaAyerStr);
+  }
+  
+  // Actualizar la interfaz con los datos filtrados
+  actualizarEstadisticas(datosFiltrados);
+  actualizarTablaVentas(datosFiltrados);
+  
+  // Actualizar gráficos con los datos filtrados
+  const periodoGrafico = document.querySelector('.grafico-control[data-periodo].activo')?.getAttribute('data-periodo') || 7;
+  const tendenciaData = obtenerTendencia(datosFiltrados, parseInt(periodoGrafico));
+  
+  if (graficoTendencia) {
+    graficoTendencia.data.labels = tendenciaData.fechas;
+    graficoTendencia.data.datasets[0].data = tendenciaData.exportacion;
+    graficoTendencia.data.datasets[1].data = tendenciaData.nacional;
+    graficoTendencia.data.datasets[2].data = tendenciaData.desecho;
+    graficoTendencia.update();
+  }
+  
+  const distribucionData = obtenerDistribucion(datosFiltrados);
+  if (graficoDistribucion) {
+    graficoDistribucion.data.datasets[0].data = distribucionData.valores;
+    graficoDistribucion.update();
+  }
+  
+  // Actualizar gráfico de predicción
+  actualizarGraficoPrediccionFutura();
+}
+
+// Inicializar todo cuando el DOM esté cargado
+document.addEventListener('DOMContentLoaded', function() {
+  // Configurar eventos para los filtros (automáticos)
+  document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
+  document.getElementById('periodoFiltro').addEventListener('change', function() {
+    document.getElementById('fechaPersonalizada').style.display = 
+      this.value === 'personalizado' ? 'block' : 'none';
+    aplicarFiltros();
+  });
+  document.getElementById('categoriaFiltro').addEventListener('change', aplicarFiltros);
+  document.getElementById('fechaSeleccionada').addEventListener('change', aplicarFiltros);
+  
+  // Configurar eventos para los controles de los gráficos
+  document.querySelectorAll('.grafico-control[data-periodo]').forEach(button => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.grafico-control[data-periodo]').forEach(btn => {
+        btn.classList.remove('activo');
       });
-      
-      // Configurar eventos para los controles de predicción
-      document.querySelectorAll('.grafico-control[data-prediccion]').forEach(button => {
-        button.addEventListener('click', function() {
-          document.querySelectorAll('.grafico-control[data-prediccion]').forEach(btn => {
-            btn.classList.remove('activo');
-          });
-          this.classList.add('activo');
-          actualizarGraficoPrediccionFutura();
-        });
-      });
-      
-      // Inicializar gráficos y datos
-      inicializarGraficoTendencia();
-      inicializarGraficoDistribucion();
-      actualizarEstadisticas();
-      actualizarTablaVentas();
-      actualizarGraficoPrediccionFutura();
-      
-      // Establecer la fecha de hoy como valor predeterminado en el filtro de fecha
-      const hoy = new Date();
-      const hoyStr = hoy.toISOString().split('T')[0];
-      document.getElementById('fechaSeleccionada').value = hoyStr;
+      this.classList.add('activo');
+      aplicarFiltros();
     });
+  });
+  
+  document.querySelectorAll('.grafico-control[data-tipo]').forEach(button => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.grafico-control[data-tipo]').forEach(btn => {
+        btn.classList.remove('activo');
+      });
+      this.classList.add('activo');
+      
+      const tipo = this.getAttribute('data-tipo');
+      graficoDistribucion.config.type = tipo;
+      
+      // Actualizar opciones según el tipo de gráfico
+      if (tipo === 'bar') {
+        graficoDistribucion.options.scales = {
+          y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false } }
+        };
+      } else {
+        graficoDistribucion.options.scales = {};
+      }
+      
+      graficoDistribucion.update();
+    });
+  });
+  
+  // Configurar eventos para los controles de predicción
+  document.querySelectorAll('.grafico-control[data-prediccion]').forEach(button => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.grafico-control[data-prediccion]').forEach(btn => {
+        btn.classList.remove('activo');
+      });
+      this.classList.add('activo');
+      actualizarGraficoPrediccionFutura();
+    });
+  });
+  
+  // Inicializar gráficos y datos
+  inicializarGraficoTendencia();
+  inicializarGraficoDistribucion();
+  actualizarEstadisticas();
+  actualizarTablaVentas();
+  actualizarGraficoPrediccionFutura();
+  
+  // Establecer la fecha de hoy como valor predeterminado en el filtro de fecha
+  const hoy = new Date();
+  const hoyStr = hoy.toISOString().split('T')[0];
+  document.getElementById('fechaSeleccionada').value = hoyStr;
+});
   </script>
 </body>
 </html>
