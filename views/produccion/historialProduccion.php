@@ -650,425 +650,489 @@ $sectoresJSON = json_encode($listarSectores);
     
 <!-- Script para la funcionalidad de la página -->
 <script>
-    // Array de sectores con la nueva estructura
-    const sectores =  <?php echo $sectoresJSON; ?>;
-    /*[
-        { value: 'sector_a', label: 'Sector A' },
-        { value: 'sector_ak', label: 'Sector Ak' },
-        { value: 'sector_b', label: 'Sector B' },
-        { value: 'sector_c', label: 'Sector C' },
-        { value: 'sector_d', label: 'Sector D' }
-    ];*/
+ // Array de sectores con la nueva estructura
+const sectores =  <?php echo $sectoresJSON; ?>;
+/*[
+    { value: 'sector_a', label: 'Sector A' },
+    { value: 'sector_ak', label: 'Sector Ak' },
+    { value: 'sector_b', label: 'Sector B' },
+    { value: 'sector_c', label: 'Sector C' },
+    { value: 'sector_d', label: 'Sector D' }
+];*/
+
+// Datos de producción completos
+const datosProduccion = <?php echo $produccionesJSON; ?>;
+
+// Datos filtrados (inicialmente todos)
+let datosFiltrados = [...datosProduccion];
+
+// Función para verificar la estructura de datos al iniciar la página
+function verificarEstructuraDatos() {
+    console.log("=== DEPURACIÓN DE DATOS ===");
     
-    // Datos de producción completos
-    const datosProduccion = <?php echo $produccionesJSON; ?>;
+    // Verificar datos de sectores
+    console.log("Estructura de sectores:", sectores);
     
-    // Datos filtrados (inicialmente todos)
-    let datosFiltrados = [...datosProduccion];
+    // Verificar valores únicos de sector en los datos de producción
+    const sectoresUnicos = [...new Set(datosProduccion.map(item => item.sector))];
+    console.log("Sectores únicos en datos de producción:", sectoresUnicos);
     
-    // Función para cargar dropdown de sectores
-    function cargarSectores() {
-        const selectSector = document.getElementById('filtroSector');
-        
-        // Limpiar opciones existentes excepto la primera
-        while (selectSector.options.length > 1) {
-            selectSector.remove(1);
+    // Verificar si todos los sectores en datos de producción tienen correspondencia en el dropdown
+    const sectorLabels = sectores.map(s => s.label);
+    const sectoresSinCorrespondencia = sectoresUnicos.filter(
+        sector => !sectorLabels.includes(sector) && 
+                  !sectorLabels.some(label => 
+                      sector.toLowerCase() === label.toLowerCase() ||
+                      sector.includes(label) ||
+                      label.includes(sector)
+                  )
+    );
+    
+    if (sectoresSinCorrespondencia.length > 0) {
+        console.warn("Sectores en datos de producción sin correspondencia en dropdown:", sectoresSinCorrespondencia);
+    } else {
+        console.log("Todos los sectores tienen correspondencia ✓");
+    }
+}
+
+// Función para cargar dropdown de sectores
+function cargarSectores() {
+    const selectSector = document.getElementById('filtroSector');
+    
+    // Limpiar opciones existentes excepto la primera
+    while (selectSector.options.length > 1) {
+        selectSector.remove(1);
+    }
+    
+    // Verificar que tengamos datos de sectores
+    if (!sectores || sectores.length === 0) {
+        console.error("No hay datos de sectores disponibles");
+        return;
+    }
+    
+    // Imprimir sectores para depuración
+    console.log("Sectores disponibles:", sectores);
+    
+    // Agregar opciones de sectores usando la estructura correcta
+    sectores.forEach(sector => {
+        if (!sector.value || !sector.label) {
+            console.warn("Sector con formato incorrecto:", sector);
+            return;
         }
         
-        // Agregar opciones de sectores usando la nueva estructura
-        sectores.forEach(sector => {
-            const option = document.createElement('option');
-            option.value = sector.value;
-            option.textContent = sector.label;
-            selectSector.appendChild(option);
-        });
-    }
+        const option = document.createElement('option');
+        option.value = sector.value;
+        option.textContent = sector.label;
+        selectSector.appendChild(option);
+    });
     
-    // Función para cargar la tabla con datos
-    function cargarTabla(datos) {
-        const cuerpoTabla = document.getElementById('cuerpoTabla');
-        cuerpoTabla.innerHTML = '';
-        
-        datos.forEach(item => {
-            // Calcular el total sumando los tres tipos
-            const total = (parseInt(item.exportacion) || 0) + 
-                         (parseInt(item.nacional) || 0) + 
-                         (parseInt(item.desecho) || 0);
-            
-            // Guardar el total calculado en el objeto
-            item.total = total;
-            
-            const fila = document.createElement('tr');
-            
-            // Hacer toda la fila clickeable
-            fila.style.cursor = 'pointer';
-            fila.onclick = function(event) {
-                // Evitar que el clic se propague si estamos haciendo clic en un botón
-                if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
-                    return;
-                }
-                verDetalles(item.id);
-            };
-            
-            fila.innerHTML = `
-                <td>${item.id2 || item.id}</td>
-                <td>${item.fecha}</td>
-                <td>${item.sector}</td>
-                <td>${total}</td>
-                <td><span class="indicador-cantidad indicador-exportacion">${item.exportacion}</span></td>
-                <td><span class="indicador-cantidad indicador-nacional">${item.nacional}</span></td>
-                <td><span class="indicador-cantidad indicador-desecho">${item.desecho}</span></td>
-                <td>
-                    <div class="acciones-fila">
-                        <button class="btn-accion btn-ver" onclick="verDetalles('${item.id}')"><i class="fas fa-eye"></i></button>
-                        <button class="btn-accion btn-editar"><i class="fas fa-edit"></i></button>
-                        <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
-                    </div>
-                </td>
-            `;
-            
-            cuerpoTabla.appendChild(fila);
-        });
-        
-        // Actualizar estadísticas
-        actualizarEstadisticas(datos);
-    }
+    // Verificar que se hayan agregado opciones
+    console.log(`Se agregaron ${selectSector.options.length - 1} sectores al dropdown`);
+}
+
+// Función para cargar la tabla con datos
+function cargarTabla(datos) {
+    const cuerpoTabla = document.getElementById('cuerpoTabla');
+    cuerpoTabla.innerHTML = '';
     
-    // Función para actualizar estadísticas
-    function actualizarEstadisticas(datos) {
-        // Calcular totales
-        const totalCajas = datos.reduce((suma, item) => suma + item.total, 0);
-        const totalExportacion = datos.reduce((suma, item) => suma + (parseInt(item.exportacion) || 0), 0);
-        const totalNacional = datos.reduce((suma, item) => suma + (parseInt(item.nacional) || 0), 0);
-        const totalDesecho = datos.reduce((suma, item) => suma + (parseInt(item.desecho) || 0), 0);
+    datos.forEach(item => {
+        // Calcular el total sumando los tres tipos
+        const total = (parseInt(item.exportacion) || 0) + 
+                     (parseInt(item.nacional) || 0) + 
+                     (parseInt(item.desecho) || 0);
         
-        // Actualizar valores en contador de resultados
-        let contadorElement = document.getElementById('contador-resultados');
-        if (contadorElement) {
-            const totalInfo = `<div style="margin-top: 5px; color: var(--color-secundario);"><i class="fas fa-boxes"></i> Total: ${totalCajas} cajas (${totalExportacion} exp, ${totalNacional} nac, ${totalDesecho} des)</div>`;
-            contadorElement.innerHTML = `<i class="fas fa-table"></i> Mostrando ${datos.length} registros ${totalInfo}`;
-        }
-    }
-    
-    // Función para convertir string a fecha
-    function convertirStringAFecha(fechaStr) {
-        // Si es formato YYYY-MM-DD (desde input date)
-        if (fechaStr.includes('-')) {
-            const [anio, mes, dia] = fechaStr.split('-');
-            return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
-        } 
-        // Si es formato DD/MM/YYYY (desde nuestros datos)
-        else if (fechaStr.includes('/')) {
-            const [dia, mes, anio] = fechaStr.split('/');
-            return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
-        }
-        return null;
-    }
-    
-    // Función para aplicar filtros
-    // Función para aplicar filtros
-    function aplicarFiltros() {
-        const fechaInicio = document.getElementById('fechaInicio').value;
-        const fechaFin = document.getElementById('fechaFin').value;
-        const sectorSeleccionado = document.getElementById('filtroSector').value;
+        // Guardar el total calculado en el objeto
+        item.total = total;
         
-        // Convertir fechas para comparar usando nuestra función personalizada
-        const fechaInicioObj = fechaInicio ? convertirStringAFecha(fechaInicio) : new Date(2000, 0, 1);
-        const fechaFinObj = fechaFin ? convertirStringAFecha(fechaFin) : new Date(2099, 11, 31);
+        const fila = document.createElement('tr');
         
-        // Asegurarse de que fechaFinObj incluya el final del día
-        fechaFinObj.setHours(23, 59, 59, 999);
-        
-        // Aplicar filtros
-        datosFiltrados = datosProduccion.filter(item => {
-            // Convertir fecha del item usando nuestra función personalizada
-            const fechaItem = convertirStringAFecha(item.fecha);
-            
-            // Verificar si cumple con los filtros de fecha
-            const cumpleFechas = fechaItem >= fechaInicioObj && fechaItem <= fechaFinObj;
-            
-            // Para el sector, debemos modificar la lógica según la nueva estructura
-            let cumpleSector = true;
-            if (sectorSeleccionado) {
-                // Buscar el sector seleccionado por value y comparar con label
-                const sectorObj = sectores.find(s => s.value === sectorSeleccionado);
-                if (sectorObj) {
-                    cumpleSector = item.sector === sectorObj.label;
-                }
+        // Hacer toda la fila clickeable
+        fila.style.cursor = 'pointer';
+        fila.onclick = function(event) {
+            // Evitar que el clic se propague si estamos haciendo clic en un botón
+            if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+                return;
             }
+            verDetalles(item.id);
+        };
+        
+        fila.innerHTML = `
+            <td>${item.id2 || item.id}</td>
+            <td>${item.fecha}</td>
+            <td>${item.sector}</td>
+            <td>${total}</td>
+            <td><span class="indicador-cantidad indicador-exportacion">${item.exportacion}</span></td>
+            <td><span class="indicador-cantidad indicador-nacional">${item.nacional}</span></td>
+            <td><span class="indicador-cantidad indicador-desecho">${item.desecho}</span></td>
+            <td>
+                <div class="acciones-fila">
+                    <button class="btn-accion btn-ver" onclick="verDetalles('${item.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="btn-accion btn-editar"><i class="fas fa-edit"></i></button>
+                    <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        `;
+        
+        cuerpoTabla.appendChild(fila);
+    });
+    
+    // Actualizar estadísticas
+    actualizarEstadisticas(datos);
+}
+
+// Función para actualizar estadísticas
+function actualizarEstadisticas(datos) {
+    // Calcular totales
+    const totalCajas = datos.reduce((suma, item) => suma + item.total, 0);
+    const totalExportacion = datos.reduce((suma, item) => suma + (parseInt(item.exportacion) || 0), 0);
+    const totalNacional = datos.reduce((suma, item) => suma + (parseInt(item.nacional) || 0), 0);
+    const totalDesecho = datos.reduce((suma, item) => suma + (parseInt(item.desecho) || 0), 0);
+    
+    // Actualizar valores en contador de resultados
+    let contadorElement = document.getElementById('contador-resultados');
+    if (contadorElement) {
+        const totalInfo = `<div style="margin-top: 5px; color: var(--color-secundario);"><i class="fas fa-boxes"></i> Total: ${totalCajas} cajas (${totalExportacion} exp, ${totalNacional} nac, ${totalDesecho} des)</div>`;
+        contadorElement.innerHTML = `<i class="fas fa-table"></i> Mostrando ${datos.length} registros ${totalInfo}`;
+    }
+}
+
+// Función para convertir string a fecha
+function convertirStringAFecha(fechaStr) {
+    // Si es formato YYYY-MM-DD (desde input date)
+    if (fechaStr.includes('-')) {
+        const [anio, mes, dia] = fechaStr.split('-');
+        return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
+    } 
+    // Si es formato DD/MM/YYYY (desde nuestros datos)
+    else if (fechaStr.includes('/')) {
+        const [dia, mes, anio] = fechaStr.split('/');
+        return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
+    }
+    return null;
+}
+
+// Función para aplicar filtros (CORREGIDA)
+function aplicarFiltros() {
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+    const sectorSeleccionado = document.getElementById('filtroSector').value;
+    
+    console.log("Aplicando filtros - Sector seleccionado:", sectorSeleccionado);
+    
+    // Convertir fechas para comparar usando nuestra función personalizada
+    const fechaInicioObj = fechaInicio ? convertirStringAFecha(fechaInicio) : new Date(2000, 0, 1);
+    const fechaFinObj = fechaFin ? convertirStringAFecha(fechaFin) : new Date(2099, 11, 31);
+    
+    // Asegurarse de que fechaFinObj incluya el final del día
+    fechaFinObj.setHours(23, 59, 59, 999);
+    
+    // Obtener el objeto del sector seleccionado para acceder a su label
+    let sectorObj = null;
+    if (sectorSeleccionado) {
+        sectorObj = sectores.find(s => s.value === sectorSeleccionado);
+        console.log("Sector encontrado:", sectorObj);
+    }
+    
+    // Aplicar filtros
+    datosFiltrados = datosProduccion.filter(item => {
+        // Convertir fecha del item usando nuestra función personalizada
+        const fechaItem = convertirStringAFecha(item.fecha);
+        
+        // Verificar si cumple con los filtros de fecha
+        const cumpleFechas = fechaItem >= fechaInicioObj && fechaItem <= fechaFinObj;
+        
+        // Para el sector, verificar si coincide exactamente o si está incluido
+        let cumpleSector = true;
+        if (sectorObj) {
+            // Comparar de varias maneras para asegurar coincidencias
+            cumpleSector = (
+                item.sector === sectorObj.label || 
+                item.sector.toLowerCase() === sectorObj.label.toLowerCase() ||
+                item.sector.includes(sectorObj.label) ||
+                sectorObj.label.includes(item.sector)
+            );
             
-            // Debe cumplir todos los filtros
-            return cumpleFechas && cumpleSector;
-        });
-        
-        // Actualizar tabla con datos filtrados
-        cargarTabla(datosFiltrados);
-        
-        // Actualizar contador de resultados
-        actualizarContadorResultados(datosFiltrados.length);
-    }
-    
-    // Función para actualizar el contador de resultados
-    function actualizarContadorResultados(cantidad) {
-        // Buscar o crear el elemento del contador
-        let contador = document.getElementById('contador-resultados');
-        if (!contador) {
-            contador = document.createElement('div');
-            contador.id = 'contador-resultados';
-            contador.className = 'contador-resultados';
-            contador.style.textAlign = 'right';
-            contador.style.marginBottom = '10px';
-            contador.style.fontSize = '14px';
-            contador.style.color = 'var(--color-primario)';
-            contador.style.fontWeight = '500';
-            
-            // Insertar antes de la tabla
-            const tablaContenedor = document.querySelector('.tabla-contenedor');
-            tablaContenedor.parentNode.insertBefore(contador, tablaContenedor);
+            // Imprimir para depuración
+            console.log(`Comparando: "${item.sector}" con "${sectorObj.label}", resultado: ${cumpleSector}`);
         }
         
-        // Actualizar el texto del contador (el contenido completo se actualizará en actualizarEstadisticas)
-        contador.innerHTML = `<i class="fas fa-table"></i> Mostrando ${cantidad} registros`;
-        
-        // Actualizar estadísticas
-        actualizarEstadisticas(datosFiltrados);
-    }
-    
-    // Función para limpiar filtros
-    function limpiarFiltros() {
-        document.getElementById('fechaInicio').value = '2025-02-15';
-        document.getElementById('fechaFin').value = '2025-03-16';
-        document.getElementById('filtroSector').value = '';
-        
-        // Restaurar todos los datos
-        datosFiltrados = [...datosProduccion];
-        cargarTabla(datosFiltrados);
-        
-        // Actualizar contador de resultados
-        actualizarContadorResultados(datosFiltrados.length);
-    }
-    
-    // Función para abrir el modal con detalles
-    function verDetalles(id) {
-        const datos = datosProduccion.find(item => item.id == id);
-        if (!datos) return;
-        
-        // Recalcular el total para asegurarnos de tener el valor correcto
-        const total = (parseInt(datos.exportacion) || 0) + 
-                     (parseInt(datos.nacional) || 0) + 
-                     (parseInt(datos.desecho) || 0);
-        
-        // Guardar el total calculado
-        datos.total = total;
-        
-        // Llenar datos básicos
-        document.getElementById('detalle-id').textContent = datos.id2 || datos.id;
-        document.getElementById('detalle-fecha').textContent = datos.fecha;
-        document.getElementById('detalle-sector').textContent = datos.sector;
-        document.getElementById('detalle-total').textContent = total;
-        
-        // Llenar datos de calidad
-        document.getElementById('detalle-exp').textContent = datos.exportacion;
-        document.getElementById('detalle-nac').textContent = datos.nacional;
-        document.getElementById('detalle-des').textContent = datos.desecho;
-        
-        // Calcular porcentajes
-        const porcExportacion = ((datos.exportacion / total) * 100).toFixed(1);
-        const porcNacional = ((datos.nacional / total) * 100).toFixed(1);
-        const porcDesecho = ((datos.desecho / total) * 100).toFixed(1);
-        
-        document.getElementById('detalle-exp-porc').textContent = porcExportacion + '%';
-        document.getElementById('detalle-nac-porc').textContent = porcNacional + '%';
-        document.getElementById('detalle-des-porc').textContent = porcDesecho + '%';
-        
-        // Mostrar el modal
-        document.getElementById('modalDetalles').classList.add('activo');
-    }
-    
-    // Función para cerrar el modal
-    function cerrarModal() {
-        document.getElementById('modalDetalles').classList.remove('activo');
-    }
-    
-    // Función para generar el PDF
-    function generarPDF() {
-        // Obtener los datos del registro actual
-        const id = document.getElementById('detalle-id').textContent;
-        const fecha = document.getElementById('detalle-fecha').textContent;
-        const sector = document.getElementById('detalle-sector').textContent;
-        const total = document.getElementById('detalle-total').textContent;
-        const exportacion = document.getElementById('detalle-exp').textContent;
-        const nacional = document.getElementById('detalle-nac').textContent;
-        const desecho = document.getElementById('detalle-des').textContent;
-        const porcExportacion = document.getElementById('detalle-exp-porc').textContent;
-        const porcNacional = document.getElementById('detalle-nac-porc').textContent;
-        const porcDesecho = document.getElementById('detalle-des-porc').textContent;
-        
-        // Crear instancia de jsPDF
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        // Configurar fuentes y estilos
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(20);
-        doc.setTextColor(74, 35, 90); // Color zarzamora oscuro
-        
-        // Encabezado con logo (se simula un logo con texto)
-        doc.text("ZARZABERRY", 105, 20, { align: "center" });
-        
-        doc.setFontSize(14);
-        doc.text("Reporte de Producción", 105, 30, { align: "center" });
-        
-        // Línea divisoria
-        doc.setDrawColor(74, 35, 90);
-        doc.setLineWidth(0.5);
-        doc.line(20, 35, 190, 35);
-        
-        // Información general
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text("INFORMACIÓN GENERAL", 20, 45);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text("ID de Producción:", 20, 55);
-        doc.text(id, 70, 55);
-        
-        doc.text("Fecha:", 20, 65);
-        doc.text(fecha, 70, 65);
-        
-        doc.text("Sector:", 20, 75);
-        doc.text(sector, 70, 75);
-        
-        doc.text("Total de Cajas:", 20, 85);
-        doc.text(total, 70, 85);
-        
-        // Distribución
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.text("DISTRIBUCIÓN POR CALIDAD", 20, 100);
-        
-        // Tabla de distribución
-        doc.setDrawColor(0);
-        doc.setFillColor(245, 245, 245);
-        doc.rect(20, 105, 170, 10, 'F');
-        
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(10);
-        doc.text("Tipo", 25, 112);
-        doc.text("Cantidad", 95, 112);
-        doc.text("Porcentaje", 145, 112);
-        
-        // Filas de datos
-        doc.setFont("helvetica", "normal");
-        
-        // Exportación
-        doc.setDrawColor(46, 204, 113);
-        doc.setFillColor(240, 250, 240);
-        doc.rect(20, 115, 170, 10, 'F');
-        doc.setDrawColor(46, 204, 113);
-        doc.setLineWidth(1);
-        doc.line(20, 115, 20, 125);
-        doc.text("Exportación", 25, 122);
-        doc.text(exportacion, 95, 122);
-        doc.text(porcExportacion, 145, 122);
-        
-        // Nacional
-        doc.setDrawColor(52, 152, 219);
-        doc.setFillColor(240, 245, 250);
-        doc.rect(20, 125, 170, 10, 'F');
-        doc.setDrawColor(52, 152, 219);
-        doc.line(20, 125, 20, 135);
-        doc.text("Nacional", 25, 132);
-        doc.text(nacional, 95, 132);
-        doc.text(porcNacional, 145, 132);
-        
-        // Desecho
-        doc.setDrawColor(231, 76, 60);
-        doc.setFillColor(250, 240, 240);
-        doc.rect(20, 135, 170, 10, 'F');
-        doc.setDrawColor(231, 76, 60);
-        doc.line(20, 135, 20, 145);
-        doc.text("Desecho", 25, 142);
-        doc.text(desecho, 95, 142);
-        doc.text(porcDesecho, 145, 142);
-        
-        // Gráfico (simulado con un rectángulo)
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.text("REPRESENTACIÓN GRÁFICA", 20, 160);
-        
-        // Crear barras para representar proporciones
-        const baseY = 170;
-        const ancho = 150;
-        
-        // Convertir porcentajes a números
-        const porcExpNum = parseFloat(porcExportacion);
-        const porcNacNum = parseFloat(porcNacional);
-        const porcDesNum = parseFloat(porcDesecho);
-        
-        // Exportación (verde)
-        doc.setFillColor(46, 204, 113);
-        const anchoExp = (porcExpNum / 100) * ancho;
-        doc.rect(20, baseY, anchoExp, 20, 'F');
-        
-        // Nacional (azul)
-        doc.setFillColor(52, 152, 219);
-        const anchoNac = (porcNacNum / 100) * ancho;
-        doc.rect(20 + anchoExp, baseY, anchoNac, 20, 'F');
-        
-        // Desecho (rojo)
-        doc.setFillColor(231, 76, 60);
-        const anchoDes = (porcDesNum / 100) * ancho;
-        doc.rect(20 + anchoExp + anchoNac, baseY, anchoDes, 20, 'F');
-        
-        // Leyenda
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.setFillColor(46, 204, 113);
-        doc.rect(20, 200, 10, 10, 'F');
-        doc.text("Exportación", 35, 207);
-        
-        doc.setFillColor(52, 152, 219);
-        doc.rect(80, 200, 10, 10, 'F');
-        doc.text("Nacional", 95, 207);
-        
-        doc.setFillColor(231, 76, 60);
-        doc.rect(140, 200, 10, 10, 'F');
-        doc.text("Desecho", 155, 207);
-        
-        // Pie de página
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(8);
-        doc.setTextColor(100, 100, 100);
-        doc.text("Generado el " + new Date().toLocaleDateString(), 20, 270);
-        doc.text("ZarzaBerry - Sistema de Gestión de Producción", 105, 270, { align: "center" });
-        doc.text("Página 1 de 1", 190, 270, { align: "right" });
-        
-        // Guardar el PDF
-        doc.save(`Reporte_Produccion_${id}.pdf`);
-    }
-    
-    // Evento para cerrar modal con Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            cerrarModal();
-        }
+        // Debe cumplir todos los filtros
+        return cumpleFechas && cumpleSector;
     });
     
-    // Cerrar modal al hacer clic fuera
-    document.getElementById('modalDetalles').addEventListener('click', function(e) {
-        if (e.target === this) {
-            cerrarModal();
-        }
-    });
+    console.log(`Filtrado completado: ${datosFiltrados.length} resultados de ${datosProduccion.length} totales`);
     
-    // Inicializar al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        cargarSectores();
-        cargarTabla(datosProduccion);
-        actualizarContadorResultados(datosFiltrados.length);
-    });
+    // Actualizar tabla con datos filtrados
+    cargarTabla(datosFiltrados);
+    
+    // Actualizar contador de resultados
+    actualizarContadorResultados(datosFiltrados.length);
+}
+
+// Función para actualizar el contador de resultados
+function actualizarContadorResultados(cantidad) {
+    // Buscar o crear el elemento del contador
+    let contador = document.getElementById('contador-resultados');
+    if (!contador) {
+        contador = document.createElement('div');
+        contador.id = 'contador-resultados';
+        contador.className = 'contador-resultados';
+        contador.style.textAlign = 'right';
+        contador.style.marginBottom = '10px';
+        contador.style.fontSize = '14px';
+        contador.style.color = 'var(--color-primario)';
+        contador.style.fontWeight = '500';
+        
+        // Insertar antes de la tabla
+        const tablaContenedor = document.querySelector('.tabla-contenedor');
+        tablaContenedor.parentNode.insertBefore(contador, tablaContenedor);
+    }
+    
+    // Actualizar el texto del contador (el contenido completo se actualizará en actualizarEstadisticas)
+    contador.innerHTML = `<i class="fas fa-table"></i> Mostrando ${cantidad} registros`;
+    
+    // Actualizar estadísticas
+    actualizarEstadisticas(datosFiltrados);
+}
+
+// Función para limpiar filtros
+function limpiarFiltros() {
+    document.getElementById('fechaInicio').value = '';
+    document.getElementById('fechaFin').value = '';
+    document.getElementById('filtroSector').value = '';
+    
+    console.log("Filtros limpiados");
+    
+    // Restaurar todos los datos
+    datosFiltrados = [...datosProduccion];
+    cargarTabla(datosFiltrados);
+    
+    // Actualizar contador de resultados
+    actualizarContadorResultados(datosFiltrados.length);
+}
+
+// Función para abrir el modal con detalles
+function verDetalles(id) {
+    const datos = datosProduccion.find(item => item.id == id);
+    if (!datos) return;
+    
+    // Recalcular el total para asegurarnos de tener el valor correcto
+    const total = (parseInt(datos.exportacion) || 0) + 
+                 (parseInt(datos.nacional) || 0) + 
+                 (parseInt(datos.desecho) || 0);
+    
+    // Guardar el total calculado
+    datos.total = total;
+    
+    // Llenar datos básicos
+    document.getElementById('detalle-id').textContent = datos.id2 || datos.id;
+    document.getElementById('detalle-fecha').textContent = datos.fecha;
+    document.getElementById('detalle-sector').textContent = datos.sector;
+    document.getElementById('detalle-total').textContent = total;
+    
+    // Llenar datos de calidad
+    document.getElementById('detalle-exp').textContent = datos.exportacion;
+    document.getElementById('detalle-nac').textContent = datos.nacional;
+    document.getElementById('detalle-des').textContent = datos.desecho;
+    
+    // Calcular porcentajes
+    const porcExportacion = ((datos.exportacion / total) * 100).toFixed(1);
+    const porcNacional = ((datos.nacional / total) * 100).toFixed(1);
+    const porcDesecho = ((datos.desecho / total) * 100).toFixed(1);
+    
+    document.getElementById('detalle-exp-porc').textContent = porcExportacion + '%';
+    document.getElementById('detalle-nac-porc').textContent = porcNacional + '%';
+    document.getElementById('detalle-des-porc').textContent = porcDesecho + '%';
+    
+    // Mostrar el modal
+    document.getElementById('modalDetalles').classList.add('activo');
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+    document.getElementById('modalDetalles').classList.remove('activo');
+}
+
+// Función para generar el PDF
+function generarPDF() {
+    // Obtener los datos del registro actual
+    const id = document.getElementById('detalle-id').textContent;
+    const fecha = document.getElementById('detalle-fecha').textContent;
+    const sector = document.getElementById('detalle-sector').textContent;
+    const total = document.getElementById('detalle-total').textContent;
+    const exportacion = document.getElementById('detalle-exp').textContent;
+    const nacional = document.getElementById('detalle-nac').textContent;
+    const desecho = document.getElementById('detalle-des').textContent;
+    const porcExportacion = document.getElementById('detalle-exp-porc').textContent;
+    const porcNacional = document.getElementById('detalle-nac-porc').textContent;
+    const porcDesecho = document.getElementById('detalle-des-porc').textContent;
+    
+    // Crear instancia de jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Configurar fuentes y estilos
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(74, 35, 90); // Color zarzamora oscuro
+    
+    // Encabezado con logo (se simula un logo con texto)
+    doc.text("ZARZABERRY", 105, 20, { align: "center" });
+    
+    doc.setFontSize(14);
+    doc.text("Reporte de Producción", 105, 30, { align: "center" });
+    
+    // Línea divisoria
+    doc.setDrawColor(74, 35, 90);
+    doc.setLineWidth(0.5);
+    doc.line(20, 35, 190, 35);
+    
+    // Información general
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("INFORMACIÓN GENERAL", 20, 45);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("ID de Producción:", 20, 55);
+    doc.text(id, 70, 55);
+    
+    doc.text("Fecha:", 20, 65);
+    doc.text(fecha, 70, 65);
+    
+    doc.text("Sector:", 20, 75);
+    doc.text(sector, 70, 75);
+    
+    doc.text("Total de Cajas:", 20, 85);
+    doc.text(total, 70, 85);
+    
+    // Distribución
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("DISTRIBUCIÓN POR CALIDAD", 20, 100);
+    
+    // Tabla de distribución
+    doc.setDrawColor(0);
+    doc.setFillColor(245, 245, 245);
+    doc.rect(20, 105, 170, 10, 'F');
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text("Tipo", 25, 112);
+    doc.text("Cantidad", 95, 112);
+    doc.text("Porcentaje", 145, 112);
+    
+    // Filas de datos
+    doc.setFont("helvetica", "normal");
+    
+    // Exportación
+    doc.setDrawColor(46, 204, 113);
+    doc.setFillColor(240, 250, 240);
+    doc.rect(20, 115, 170, 10, 'F');
+    doc.setDrawColor(46, 204, 113);
+    doc.setLineWidth(1);
+    doc.line(20, 115, 20, 125);
+    doc.text("Exportación", 25, 122);
+    doc.text(exportacion, 95, 122);
+    doc.text(porcExportacion, 145, 122);
+    
+    // Nacional
+    doc.setDrawColor(52, 152, 219);
+    doc.setFillColor(240, 245, 250);
+    doc.rect(20, 125, 170, 10, 'F');
+    doc.setDrawColor(52, 152, 219);
+    doc.line(20, 125, 20, 135);
+    doc.text("Nacional", 25, 132);
+    doc.text(nacional, 95, 132);
+    doc.text(porcNacional, 145, 132);
+    
+    // Desecho
+    doc.setDrawColor(231, 76, 60);
+    doc.setFillColor(250, 240, 240);
+    doc.rect(20, 135, 170, 10, 'F');
+    doc.setDrawColor(231, 76, 60);
+    doc.line(20, 135, 20, 145);
+    doc.text("Desecho", 25, 142);
+    doc.text(desecho, 95, 142);
+    doc.text(porcDesecho, 145, 142);
+    
+    // Gráfico (simulado con un rectángulo)
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("REPRESENTACIÓN GRÁFICA", 20, 160);
+    
+    // Crear barras para representar proporciones
+    const baseY = 170;
+    const ancho = 150;
+    
+    // Convertir porcentajes a números
+    const porcExpNum = parseFloat(porcExportacion);
+    const porcNacNum = parseFloat(porcNacional);
+    const porcDesNum = parseFloat(porcDesecho);
+    
+    // Exportación (verde)
+    doc.setFillColor(46, 204, 113);
+    const anchoExp = (porcExpNum / 100) * ancho;
+    doc.rect(20, baseY, anchoExp, 20, 'F');
+    
+    // Nacional (azul)
+    doc.setFillColor(52, 152, 219);
+    const anchoNac = (porcNacNum / 100) * ancho;
+    doc.rect(20 + anchoExp, baseY, anchoNac, 20, 'F');
+    
+    // Desecho (rojo)
+    doc.setFillColor(231, 76, 60);
+    const anchoDes = (porcDesNum / 100) * ancho;
+    doc.rect(20 + anchoExp + anchoNac, baseY, anchoDes, 20, 'F');
+    
+    // Leyenda
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setFillColor(46, 204, 113);
+    doc.rect(20, 200, 10, 10, 'F');
+    doc.text("Exportación", 35, 207);
+    
+    doc.setFillColor(52, 152, 219);
+    doc.rect(80, 200, 10, 10, 'F');
+    doc.text("Nacional", 95, 207);
+    
+    doc.setFillColor(231, 76, 60);
+    doc.rect(140, 200, 10, 10, 'F');
+    doc.text("Desecho", 155, 207);
+    
+    // Pie de página
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Generado el " + new Date().toLocaleDateString(), 20, 270);
+    doc.text("ZarzaBerry - Sistema de Gestión de Producción", 105, 270, { align: "center" });
+    doc.text("Página 1 de 1", 190, 270, { align: "right" });
+    
+    // Guardar el PDF
+    doc.save(`Reporte_Produccion_${id}.pdf`);
+}
+
+// Evento para cerrar modal con Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModal();
+    }
+});
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modalDetalles').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModal();
+    }
+});
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    verificarEstructuraDatos(); // Nueva función de depuración
+    cargarSectores();
+    cargarTabla(datosProduccion);
+    actualizarContadorResultados(datosFiltrados.length);
+});
 </script>
 </body>
 </html>
