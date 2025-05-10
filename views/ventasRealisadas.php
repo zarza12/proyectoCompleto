@@ -365,9 +365,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
     // Datos proporcionados
     const ventasRealizadas = [
-      { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 1 },
-      { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 4 },
-      { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 1 },
+      { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 133 },
+      { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 433 },
+      { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 13 },
       { fecha: '2025-03-03', exportacion: 80, nacional: 10, desecho: 3 }
     ];
 
