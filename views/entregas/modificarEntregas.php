@@ -46,8 +46,6 @@ if (isset($_POST['modificarEntregaBtn']) && $_POST['modificarEntregaBtn'] === 'm
 $daoEntregas = new daoEntregas();
 $listar = $daoEntregas->listarEntregas();
 $listarJSON = json_encode($listar);
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -301,6 +299,15 @@ $listarJSON = json_encode($listar);
         .tabla-registros td:last-child {
             text-align: center;
             white-space: nowrap;
+        }
+        
+        /* Mensaje de no resultados */
+        .mensaje-no-resultados {
+            padding: 20px;
+            text-align: center;
+            display: none;
+            color: var(--color-texto-secundario);
+            font-style: italic;
         }
         
         /* Acciones en tabla */
@@ -672,18 +679,22 @@ $listarJSON = json_encode($listar);
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Fecha</th>
-                        <th>Calidad</th>
-                        <th>Cantidad</th>
-                        <th>Empresa</th>
-                        <th>Transportista</th>
-                        <th>Acciones</th>
+                        <th>FECHA</th>
+                        <th>CALIDAD</th>
+                        <th>CANTIDAD</th>
+                        <th>EMPRESA</th>
+                        <th>TRANSPORTISTA</th>
+                        <th>ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Aquí se cargarán dinámicamente las filas desde JavaScript -->
                 </tbody>
             </table>
+            <!-- Mensaje cuando no hay resultados -->
+            <div id="mensajeNoResultados" class="mensaje-no-resultados">
+                <i class="fas fa-search-minus"></i> No se encontraron entregas que coincidan con los filtros seleccionados.
+            </div>
         </div>
         
         <div class="paginacion">
@@ -844,6 +855,14 @@ $listarJSON = json_encode($listar);
                 // Agregar fila a la tabla
                 tbody.appendChild(fila);
             });
+            
+            // Mostrar mensaje si no hay datos
+            const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+            if (entregasEjemplo.length === 0) {
+                mensajeNoResultados.style.display = 'block';
+            } else {
+                mensajeNoResultados.style.display = 'none';
+            }
         }
 
         // Función para confirmar eliminación de un registro
@@ -945,16 +964,13 @@ $listarJSON = json_encode($listar);
             });
         }
 
-        // Inicializar filtros
-        function inicializarFiltros() {
-            document.getElementById('filtroCalidad').addEventListener('change', filtrarTabla);
-            document.getElementById('filtroFecha').addEventListener('change', filtrarTabla);
-        }
-
+        // Función para filtrar la tabla según los filtros seleccionados
         function filtrarTabla() {
             const filtroCalidad = document.getElementById('filtroCalidad').value.toLowerCase();
             const filtroFecha = document.getElementById('filtroFecha').value;
             const filas = document.querySelectorAll('.tabla-registros tbody tr');
+            
+            console.log('Filtro aplicado - Calidad:', filtroCalidad, 'Fecha:', filtroFecha);
             
             // Obtener la fecha actual para comparaciones
             const fechaActual = new Date();
@@ -964,21 +980,34 @@ $listarJSON = json_encode($listar);
             
             // Formato DD/MM/YYYY
             const hoy = `${diaActual}/${mesActual}/${anioActual}`;
+            console.log('Fecha actual (hoy):', hoy);
+            
+            let filasVisibles = 0;
             
             filas.forEach(fila => {
                 let mostrar = true;
                 
                 // Filtrar por calidad
                 if (filtroCalidad) {
-                    const calidadCelda = fila.cells[2].textContent.toLowerCase();
-                    if (!calidadCelda.toLowerCase().includes(filtroCalidad)) {
+                    // Obtener el texto dentro del span de calidad
+                    const calidadSpan = fila.cells[2].querySelector('span');
+                    const calidadCelda = calidadSpan ? calidadSpan.textContent.toLowerCase() : '';
+                    console.log('Fila ID:', fila.cells[0].textContent, 'Calidad en celda:', calidadCelda);
+                    
+                    // Mapeo específico de valores del filtro a textos en las celdas
+                    if (filtroCalidad === 'exportacion' && !calidadCelda.includes('exportación')) {
+                        mostrar = false;
+                    } else if (filtroCalidad === 'nacional' && !calidadCelda.includes('nacional')) {
+                        mostrar = false;
+                    } else if (filtroCalidad === 'desecho' && !calidadCelda.includes('desecho')) {
                         mostrar = false;
                     }
                 }
                 
-                // Filtrar por fecha
+                // Filtrar por fecha solo si la fila aún es visible por el filtro de calidad
                 if (filtroFecha && mostrar) {
                     const fechaFila = fila.cells[1].textContent; // Formato DD/MM/YYYY
+                    console.log('Fecha en fila:', fechaFila);
                     
                     // Convertir fecha de la fila a objeto Date para comparaciones
                     const [diaFila, mesFila, anioFila] = fechaFila.split('/');
@@ -995,6 +1024,7 @@ $listarJSON = json_encode($listar);
                         const diaSemana = fechaActual.getDay(); // 0 es domingo, 1 es lunes, ...
                         const diferenciaDias = diaSemana === 0 ? 6 : diaSemana - 1; // Ajustar para que el inicio sea lunes
                         inicioSemana.setDate(fechaActual.getDate() - diferenciaDias);
+                        inicioSemana.setHours(0, 0, 0, 0); // Establecer a inicio del día
                         
                         // Comprobar si la fecha está dentro de la semana actual
                         if (fechaFilaObj < inicioSemana || fechaFilaObj > fechaActual) {
@@ -1008,8 +1038,25 @@ $listarJSON = json_encode($listar);
                     }
                 }
                 
+                // Aplicar visibilidad
                 fila.style.display = mostrar ? '' : 'none';
+                
+                if (mostrar) {
+                    filasVisibles++;
+                }
             });
+            
+            console.log('Total de filas visibles después de filtrar:', filasVisibles);
+            
+            // Mostrar mensaje si no hay resultados
+            const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+            if (mensajeNoResultados) {
+                if (filasVisibles === 0) {
+                    mensajeNoResultados.style.display = 'block';
+                } else {
+                    mensajeNoResultados.style.display = 'none';
+                }
+            }
         }
 
         // Inicializar búsqueda
@@ -1018,15 +1065,30 @@ $listarJSON = json_encode($listar);
                 const terminoBusqueda = e.target.value.toLowerCase();
                 const filas = document.querySelectorAll('.tabla-registros tbody tr');
                 
+                let filasVisibles = 0;
+                
                 filas.forEach(fila => {
                     const texto = fila.textContent.toLowerCase();
                     if (texto.includes(terminoBusqueda)) {
                         fila.style.display = '';
+                        filasVisibles++;
                     } else {
                         fila.style.display = 'none';
                     }
                 });
+                
+                // Mostrar mensaje si no hay resultados
+                const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+                if (mensajeNoResultados) {
+                    mensajeNoResultados.style.display = filasVisibles === 0 ? 'block' : 'none';
+                }
             });
+        }
+
+        // Inicializar filtros
+        function inicializarFiltros() {
+            document.getElementById('filtroCalidad').addEventListener('change', filtrarTabla);
+            document.getElementById('filtroFecha').addEventListener('change', filtrarTabla);
         }
 
         // Inicializar todo cuando la página cargue
