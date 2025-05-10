@@ -650,7 +650,7 @@ $sectoresJSON = json_encode($listarSectores);
     
 <!-- Script para la funcionalidad de la página -->
 <script>
- // Array de sectores con la nueva estructura
+// Array de sectores con la estructura value/label
 const sectores =  <?php echo $sectoresJSON; ?>;
 /*[
     { value: 'sector_a', label: 'Sector A' },
@@ -666,33 +666,61 @@ const datosProduccion = <?php echo $produccionesJSON; ?>;
 // Datos filtrados (inicialmente todos)
 let datosFiltrados = [...datosProduccion];
 
-// Función para verificar la estructura de datos al iniciar la página
-function verificarEstructuraDatos() {
-    console.log("=== DEPURACIÓN DE DATOS ===");
+// Variable global para almacenar el mapeo
+let mapeoSectores = {};
+
+// Función para crear tabla de mapeo entre sectores de datos y opciones del dropdown
+function crearMapeoSectores() {
+    // Esta función crea un mapeo explícito entre los sectores en los datos y los values del dropdown
+    const mapeoSectores = {};
     
-    // Verificar datos de sectores
-    console.log("Estructura de sectores:", sectores);
+    // 1. Obtener todos los sectores únicos de los datos
+    const sectoresEnDatos = [...new Set(datosProduccion.map(item => item.sector))];
+    console.log("Sectores encontrados en datos:", sectoresEnDatos);
     
-    // Verificar valores únicos de sector en los datos de producción
-    const sectoresUnicos = [...new Set(datosProduccion.map(item => item.sector))];
-    console.log("Sectores únicos en datos de producción:", sectoresUnicos);
+    // 2. Para cada sector en los datos, encontrar el sector correspondiente en el dropdown
+    sectoresEnDatos.forEach(sectorDato => {
+        // Normalizar para comparación
+        const sectorDatoNormalizado = sectorDato.toLowerCase().trim();
+        const sectorDatoSinGuiones = sectorDatoNormalizado.replace(/_/g, ' ');
+        
+        // Buscar el sector correspondiente en la lista de sectores del dropdown
+        let sectorCorrespondiente = null;
+        
+        for (const sector of sectores) {
+            const valueNormalizado = sector.value.toLowerCase().trim();
+            const labelNormalizado = sector.label.toLowerCase().trim();
+            
+            // Verificar coincidencias directas
+            if (sectorDatoNormalizado === valueNormalizado || 
+                sectorDatoNormalizado === labelNormalizado) {
+                sectorCorrespondiente = sector.value;
+                break;
+            }
+            
+            // Verificar coincidencias sin guiones
+            if (sectorDatoSinGuiones === valueNormalizado.replace(/_/g, ' ') || 
+                sectorDatoSinGuiones === labelNormalizado.replace(/_/g, ' ')) {
+                sectorCorrespondiente = sector.value;
+                break;
+            }
+            
+            // Si no se encuentra correspondencia exacta, buscar coincidencias parciales
+            if (sectorDatoNormalizado.includes(valueNormalizado) || 
+                valueNormalizado.includes(sectorDatoNormalizado) ||
+                sectorDatoNormalizado.includes(labelNormalizado) || 
+                labelNormalizado.includes(sectorDatoNormalizado)) {
+                sectorCorrespondiente = sector.value;
+                break;
+            }
+        }
+        
+        // Guardar en el mapeo
+        mapeoSectores[sectorDato] = sectorCorrespondiente;
+    });
     
-    // Verificar si todos los sectores en datos de producción tienen correspondencia en el dropdown
-    const sectorLabels = sectores.map(s => s.label);
-    const sectoresSinCorrespondencia = sectoresUnicos.filter(
-        sector => !sectorLabels.includes(sector) && 
-                  !sectorLabels.some(label => 
-                      sector.toLowerCase() === label.toLowerCase() ||
-                      sector.includes(label) ||
-                      label.includes(sector)
-                  )
-    );
-    
-    if (sectoresSinCorrespondencia.length > 0) {
-        console.warn("Sectores en datos de producción sin correspondencia en dropdown:", sectoresSinCorrespondencia);
-    } else {
-        console.log("Todos los sectores tienen correspondencia ✓");
-    }
+    console.log("Mapeo de sectores creado:", mapeoSectores);
+    return mapeoSectores;
 }
 
 // Función para cargar dropdown de sectores
@@ -713,7 +741,7 @@ function cargarSectores() {
     // Imprimir sectores para depuración
     console.log("Sectores disponibles:", sectores);
     
-    // Agregar opciones de sectores usando la estructura correcta
+    // Agregar opciones de sectores usando la estructura value/label
     sectores.forEach(sector => {
         if (!sector.value || !sector.label) {
             console.warn("Sector con formato incorrecto:", sector);
@@ -811,7 +839,7 @@ function convertirStringAFecha(fechaStr) {
     return null;
 }
 
-// Función para aplicar filtros (CORREGIDA)
+// Función para aplicar filtros usando el mapeo explícito
 function aplicarFiltros() {
     const fechaInicio = document.getElementById('fechaInicio').value;
     const fechaFin = document.getElementById('fechaFin').value;
@@ -819,53 +847,62 @@ function aplicarFiltros() {
     
     console.log("Aplicando filtros - Sector seleccionado:", sectorSeleccionado);
     
-    // Convertir fechas para comparar usando nuestra función personalizada
+    // Convertir fechas para comparar
     const fechaInicioObj = fechaInicio ? convertirStringAFecha(fechaInicio) : new Date(2000, 0, 1);
     const fechaFinObj = fechaFin ? convertirStringAFecha(fechaFin) : new Date(2099, 11, 31);
-    
-    // Asegurarse de que fechaFinObj incluya el final del día
     fechaFinObj.setHours(23, 59, 59, 999);
     
-    // Obtener el objeto del sector seleccionado para acceder a su label
-    let sectorObj = null;
-    if (sectorSeleccionado) {
-        sectorObj = sectores.find(s => s.value === sectorSeleccionado);
-        console.log("Sector encontrado:", sectorObj);
-    }
-    
-    // Aplicar filtros
+    // Aplicar filtros usando los dos enfoques combinados para máxima compatibilidad
     datosFiltrados = datosProduccion.filter(item => {
-        // Convertir fecha del item usando nuestra función personalizada
+        // Filtro de fecha
         const fechaItem = convertirStringAFecha(item.fecha);
-        
-        // Verificar si cumple con los filtros de fecha
         const cumpleFechas = fechaItem >= fechaInicioObj && fechaItem <= fechaFinObj;
         
-        // Para el sector, verificar si coincide exactamente o si está incluido
+        // Filtro de sector
         let cumpleSector = true;
-        if (sectorObj) {
-            // Comparar de varias maneras para asegurar coincidencias
-            cumpleSector = (
-                item.sector === sectorObj.label || 
-                item.sector.toLowerCase() === sectorObj.label.toLowerCase() ||
-                item.sector.includes(sectorObj.label) ||
-                sectorObj.label.includes(item.sector)
-            );
+        if (sectorSeleccionado && sectorSeleccionado !== '') {
+            // 1. Primero usar el mapeo directo si existe
+            if (mapeoSectores[item.sector]) {
+                cumpleSector = mapeoSectores[item.sector] === sectorSeleccionado;
+            } 
+            // 2. Si no hay mapeo o no coincide, intentar con el enfoque de normalización
+            else {
+                // Buscar el sector seleccionado en la lista de sectores
+                const sectorObj = sectores.find(s => s.value === sectorSeleccionado);
+                
+                if (sectorObj) {
+                    // Normalizar textos
+                    const itemSectorNormalizado = item.sector.toLowerCase().trim();
+                    const valueSectorNormalizado = sectorSeleccionado.toLowerCase().trim();
+                    const labelSectorNormalizado = sectorObj.label.toLowerCase().trim();
+                    
+                    // Comparar con todas las variantes posibles
+                    cumpleSector = (
+                        // Comparación directa
+                        itemSectorNormalizado === valueSectorNormalizado ||
+                        itemSectorNormalizado === labelSectorNormalizado ||
+                        
+                        // Comparación reemplazando guiones por espacios
+                        itemSectorNormalizado.replace(/_/g, ' ') === valueSectorNormalizado.replace(/_/g, ' ') ||
+                        itemSectorNormalizado.replace(/_/g, ' ') === labelSectorNormalizado.replace(/_/g, ' ') ||
+                        
+                        // Comparación reemplazando espacios por guiones
+                        itemSectorNormalizado.replace(/ /g, '_') === valueSectorNormalizado.replace(/ /g, '_') ||
+                        itemSectorNormalizado.replace(/ /g, '_') === labelSectorNormalizado.replace(/ /g, '_')
+                    );
+                }
+            }
             
-            // Imprimir para depuración
-            console.log(`Comparando: "${item.sector}" con "${sectorObj.label}", resultado: ${cumpleSector}`);
+            console.log(`Sector en datos: "${item.sector}", seleccionado: "${sectorSeleccionado}", cumple: ${cumpleSector}`);
         }
         
-        // Debe cumplir todos los filtros
         return cumpleFechas && cumpleSector;
     });
     
     console.log(`Filtrado completado: ${datosFiltrados.length} resultados de ${datosProduccion.length} totales`);
     
-    // Actualizar tabla con datos filtrados
+    // Actualizar tabla y estadísticas
     cargarTabla(datosFiltrados);
-    
-    // Actualizar contador de resultados
     actualizarContadorResultados(datosFiltrados.length);
 }
 
@@ -1128,9 +1165,16 @@ document.getElementById('modalDetalles').addEventListener('click', function(e) {
 
 // Inicializar al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    verificarEstructuraDatos(); // Nueva función de depuración
+    // Crear el mapeo de sectores (solución definitiva)
+    mapeoSectores = crearMapeoSectores();
+    
+    // Cargar los sectores en el dropdown
     cargarSectores();
+    
+    // Cargar datos iniciales
     cargarTabla(datosProduccion);
+    
+    // Actualizar contador
     actualizarContadorResultados(datosFiltrados.length);
 });
 </script>
