@@ -593,8 +593,8 @@ $listarJSON = json_encode($listar);
             <i class="fas fa-filter"></i> Filtros y búsqueda
         </div>
         <div class="filtros-compactos">
-            <input type="date" class="input-filtro" id="fechaInicio" value="2025-02-15" onchange="filtrarEntregas()">
-            <input type="date" class="input-filtro" id="fechaFin" value="2025-03-16" onchange="filtrarEntregas()">
+            <input type="date" class="input-filtro" id="fechaInicio" value="" onchange="filtrarEntregas()">
+            <input type="date" class="input-filtro" id="fechaFin" value="" onchange="filtrarEntregas()">
             <select class="select-filtro" id="filtroCalidad" onchange="filtrarEntregas()">
                 <option value="">Todas las calidades</option>
                 <option value="exportacion">Exportación</option>
@@ -1030,8 +1030,8 @@ $listarJSON = json_encode($listar);
         cargarEntregas(datosEntregas);
         
         // Configurar los eventos de los filtros
-        //document.getElementById('fechaInicio').addEventListener('change', filtrarEntregas);
-        //document.getElementById('fechaFin').addEventListener('change', filtrarEntregas);
+        document.getElementById('fechaInicio').addEventListener('change', filtrarEntregas);
+        document.getElementById('fechaFin').addEventListener('change', filtrarEntregas);
         document.getElementById('filtroCalidad').addEventListener('change', filtrarEntregas);
     });
 </script>
