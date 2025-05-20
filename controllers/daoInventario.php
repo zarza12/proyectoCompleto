@@ -132,8 +132,6 @@ class daoInventario {
                     WHERE idProduccion = '{$idProduccion}'";
     
             $resultado = $conexion->query($sql);
-
-            mostrarMensaje("si trate de eliminar inventario  ");
     
             if ($resultado) {
                 return true;
@@ -152,8 +150,6 @@ class daoInventario {
                     WHERE idEntregas = '{$idEntrega}'";
     
             $resultado = $conexion->query($sql);
-
-            mostrarMensaje("si trate de eliminar inventario  ");
     
             if ($resultado) {
                 return true;
