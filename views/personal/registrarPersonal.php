@@ -59,29 +59,33 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     );    
     $daoPersona = new daoPersonas();
    
+        if(!$daoPersona->exitCurp($persona)){
+                $registo = $daoPersona->registrarPersonas($persona);
+                    
 
-    $registo = $daoPersona->registrarPersonas($persona);
+                    if ($registo) {
+                        echo "
+                        <script>
+                            window.addEventListener('DOMContentLoaded', function() {
+                                enviarGmail(
+                                    " . json_encode($nombreCompleto) . ",
+                                    " . json_encode($IDpersona) . ",
+                                    " . json_encode($email) . ",
+                                    " . json_encode($puesto) . "
+                                );
+                                alert('Registro exitoso');
+                                window.location.href = 'registrarPersonal.php';
+                            });
+                        </script>";
+                        
+                    } else {
+                        mostrarMensaje("Error al insertar el registro.");
+                    
+                    }
+        }else{
+             mostrarMensaje("Ya existe la persona");
+        }
     
-
-    if ($registo) {
-        echo "
-        <script>
-            window.addEventListener('DOMContentLoaded', function() {
-                enviarGmail(
-                    " . json_encode($nombreCompleto) . ",
-                    " . json_encode($IDpersona) . ",
-                    " . json_encode($email) . ",
-                    " . json_encode($puesto) . "
-                );
-                alert('Registro exitoso');
-                window.location.href = 'registrarPersonal.php';
-            });
-        </script>";
-        
-    } else {
-        mostrarMensaje("Error al insertar el registro.");
-       
-    }
 }
 ?>
 

@@ -161,5 +161,20 @@ class daoPersonas {
         }
     }
     
+    public function exitCurp($curp) {
+        $conexion = getConnection();
+        try {
+           $persona = $conexion->query("SELECT * FROM personal WHERE curp = '{$curp}'");
+            
+            if ($persona->num_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            mostrarMensaje("Error al registrar: " . $e->getMessage());
+            return false;
+        }
+    }
     
 }
