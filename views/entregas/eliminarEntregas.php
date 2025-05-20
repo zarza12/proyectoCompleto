@@ -22,7 +22,7 @@ if (isset($_POST['eliminarEntregaBtn']) && $_POST['eliminarEntregaBtn'] === 'eli
             window.location.href = 'eliminarEntregas.php';
         </script>";
     } else {
-        mostrarMensaje("Error al Modificar.");
+        mostrarMensaje("Error al eliminar.");
        
     }
    

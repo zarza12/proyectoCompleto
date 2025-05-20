@@ -107,31 +107,34 @@ class daoEntregas {
             return false;
         }
     }
-
+    
     function deleteEntrega($idEntrega) {
         $conexion = getConnection();
         try {
-            // Escapar el ID para prevenir inyección SQL
-            
-            echo "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff  ".$idEntrega;
-            $sql = "DELETE FROM entregas WHERE idEntregas = '{$idEntrega}'";
             $conexion->begin_transaction();
 
-            $resultado = $conexion->query($sql);
-            
-            // Registrar en inventario
-               $daoInventario = new daoInventario();
-                $resultado2 =$daoInventario->eliminarInventarioPorEntrega($idEntrega,$conexion);
+            // Paso 1: eliminar inventario relacionado
+            $daoInventario = new daoInventario();
+            $resultado2 = $daoInventario->eliminarInventarioPorEntrega($idEntrega, $conexion);
 
-            if ($resultado&&$resultado2) {
-                $conexion->commit();
-                return true;
-            } else {
-                 $conexion->rollback();
-                return false;
+            // Paso 2: eliminar la entrega (solo si se eliminó el inventario primero)
+            if ($resultado2) {
+                $sql = "DELETE FROM entregas WHERE idEntregas = '{$idEntrega}'";
+                $resultado = $conexion->query($sql);
+
+                if ($resultado) {
+                    $conexion->commit();
+                    return true;
+                }
             }
+
+            // Si algo falla, se revierte
+            $conexion->rollback();
+            return false;
+
         } catch (mysqli_sql_exception $e) {
             mostrarMensaje("Error al eliminar entrega: " . $e->getMessage());
+            $conexion->rollback();
             return false;
         }
     }
