@@ -234,14 +234,14 @@ foreach ($listaVentas as $venta) {
     <div class="filtros-contenedor">
       <div class="filtro-grupo">
         <label class="filtro-label">Tipo de Filtro</label>
-        <select id="tipoFiltro" class="filtro-select">
+        <select id="tipoFiltro" class="filtro-select" style="display: none;">
           <option value="dia">Día</option>
           <option value="semana" selected>Semana</option>
           <option value="mes">Mes</option>
           <option value="anio">Año</option>
         </select>
       </div>
-      <div class="filtro-grupo">
+      <div class="filtro-grupo" style="display: none;">
         <label class="filtro-label">Periodo</label>
         <select id="periodoFiltro" class="filtro-select">
           <option value="actual" selected>Actual</option>
@@ -300,7 +300,7 @@ foreach ($listaVentas as $venta) {
           <div class="grafico-titulo">
             <i class="fas fa-chart-line"></i> Tendencia de Ventas
           </div>
-          <div class="grafico-controles">
+          <div class="grafico-controles" style="display: none;">
             <button class="grafico-control activo" data-periodo="7">7D</button>
             <button class="grafico-control" data-periodo="14">14D</button>
             <button class="grafico-control" data-periodo="30">30D</button>
