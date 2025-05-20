@@ -828,7 +828,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <i class="fas fa-venus-mars campo-icono"></i>
                                 <select id="modificarGenero" name="modificarGenero" class="form-select">
                                     <option value="">Seleccione...</option>
-                                    <option value="Masculino">Masculino</option>
+                                    <option value="masculino">Masculino</option>
                                     <option value="femenino">Femenino</option>
                                     <option value="Otro">Otro</option>
                                 </select>
