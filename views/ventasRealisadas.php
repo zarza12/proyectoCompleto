@@ -2,6 +2,30 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+
+
+include_once  '../controllers/daoInventario.php';
+include_once  '../models/Inventario.php';
+
+$daoInventario = new daoInventario();
+$listaTotales = $daoInventario->obtenerTotalesInventario();
+
+$listaVentas = $daoInventario->obtenerVentasInventario();
+$ventasInventarioJS = [];
+foreach ($listaVentas as $venta) {
+    $ventasInventarioJS[] = [
+        'fecha' => $venta['fecha'],
+        'exportacion' => (int)$venta['ventaExportacion'],
+        'nacional' => (int)$venta['ventaNacional'],
+        'desecho' => (int)$venta['ventaDesecho']
+    ];
+}
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -363,12 +387,13 @@ let graficoTendencia = null;
 let graficoDistribucion = null;
 let graficoPrediccion = null;
 // Datos proporcionados
-const ventasRealizadas = [
+const ventasRealizadas =<?php echo json_encode($ventasInventarioJS); ?>;
+/* [
   { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 133 },
   { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 433 },
   { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 13 },
   { fecha: '2025-03-03', exportacion: 80, nacional: 10, desecho: 3 }
-];
+];*/
 // Transformar datos para que coincidan con la estructura esperada
 const datosVentas = [];
 // Procesar ventasRealizadas
