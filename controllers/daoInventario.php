@@ -145,6 +145,26 @@ class daoInventario {
             return false;
         }
     }
+
+    public function eliminarInventarioPorEntrega($idEntrega,mysqli $conexion) {
+        try {
+            $sql = "DELETE FROM inventario 
+                    WHERE idEntregas = '{$idEntrega}'";
+    
+            $resultado = $conexion->query($sql);
+
+            mostrarMensaje("si trate de eliminar inventario  ");
+    
+            if ($resultado) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            mostrarMensaje("Error al eliminar: " . $e->getMessage());
+            return false;
+        }
+    }
     
     public function obtenerTotalesInventario() {
         $conexion = getConnection();

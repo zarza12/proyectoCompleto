@@ -115,12 +115,19 @@ class daoEntregas {
             $idEntrega = $conexion->real_escape_string($idEntrega);
             
             $sql = "DELETE FROM entregas WHERE idEntregas = '{$idEntrega}'";
-            
+            $conexion->begin_transaction();
+
             $resultado = $conexion->query($sql);
             
-            if ($resultado) {
+            // Registrar en inventario
+               $daoInventario = new daoInventario();
+                $resultado2 =$daoInventario->eliminarInventarioPorEntrega($idEntrega,$conexion);
+
+            if ($resultado&&$resultado2) {
+                $conexion->commit();
                 return true;
             } else {
+                 $conexion->rollback();
                 return false;
             }
         } catch (mysqli_sql_exception $e) {
