@@ -822,6 +822,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <input type="date" id="modificarFechaNacimiento" name="modificarFechaNacimiento" class="form-input" required>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label class="form-label">Género</label>
                             <div class="campo-contenedor">
