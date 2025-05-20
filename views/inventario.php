@@ -349,7 +349,7 @@ foreach ($listaVentas as $venta) {
           <select id="filtroTiempo" class="filtro-tiempo">
             <option value="todos">Todos los registros</option>
             <option value="mes">Mes actual</option>
-            <option value="semana">Semana actual</option>
+            <option value="semana" style="display: none;" >Semana actual</option>
             <option value="hoy" selected>Hoy</option>
           </select>
         </div>

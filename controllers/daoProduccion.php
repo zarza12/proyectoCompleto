@@ -125,38 +125,36 @@ class daoProduccion {
     }
     
     public function listarProduccion() {
-    $conexion = getConnection();
-    $listaProducciones = [];
+        $conexion = getConnection();
+        $listaProducciones = [];
 
-    try {
-        $sql = "
-            SELECT * FROM produccion WHERE id != 1
-        ";
-        $result = $conexion->query($sql);
+        try {
+            $sql = "
+                SELECT * FROM produccion WHERE id != 1
+            ";
+            $result = $conexion->query($sql);
 
-        while ($row = $result->fetch_assoc()) {
-            if($row['id']!='1')
-                $listaProducciones[] = new Produccion(
-                    $row['id'],        // id
-                    $row['sectorProduccion'],     // sectorProduccion
-                    $row['fechaProduccion'],      // fechaProduccion
-                    $row['calidadExportacion'],   // calidadExportacion
-                    $row['calidadNacional'],      // calidadNacional
-                    $row['calidadDesecho'],       // calidadDesecho
-                    $row['subTotal']              // subTotal
-                );
-            
-            
+            while ($row = $result->fetch_assoc()) {
+                if($row['id']!='1')
+                    $listaProducciones[] = new Produccion(
+                        $row['id'],        // id
+                        $row['sectorProduccion'],     // sectorProduccion
+                        $row['fechaProduccion'],      // fechaProduccion
+                        $row['calidadExportacion'],   // calidadExportacion
+                        $row['calidadNacional'],      // calidadNacional
+                        $row['calidadDesecho'],       // calidadDesecho
+                        $row['subTotal']              // subTotal
+                    );
+                
+                
+            }
+
+            return $listaProducciones;
+        } catch (mysqli_sql_exception $e) {
+            mostrarMensaje("Error al listar producciones: " . $e->getMessage());
+            return [];
         }
-
-        return $listaProducciones;
-    } catch (mysqli_sql_exception $e) {
-        mostrarMensaje("Error al listar producciones: " . $e->getMessage());
-        return [];
     }
-    }
-
-    
 
     function generarNumero() {
         $numero = 0;
