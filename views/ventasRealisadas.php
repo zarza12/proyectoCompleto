@@ -233,6 +233,15 @@ foreach ($listaVentas as $venta) {
     <!-- Filtros superiores -->
     <div class="filtros-contenedor">
       <div class="filtro-grupo">
+        <div class="filtro-grupo">
+        <label class="filtro-label">Categoría</label>
+        <select id="categoriaFiltro" class="filtro-select">
+          <option value="todas" selected>Todas</option>
+          <option value="exportacion">Exportación</option>
+          <option value="nacional">Nacional</option>
+          <option value="desecho">Desecho</option>
+        </select>
+      </div>
         <label class="filtro-label">Tipo de Filtro</label>
         <select id="tipoFiltro" class="filtro-select" style="display: none;">
           <option value="dia">Día</option>
@@ -249,15 +258,7 @@ foreach ($listaVentas as $venta) {
           <option value="personalizado">Personalizado</option>
         </select>
       </div>
-      <div class="filtro-grupo">
-        <label class="filtro-label">Categoría</label>
-        <select id="categoriaFiltro" class="filtro-select">
-          <option value="todas" selected>Todas</option>
-          <option value="exportacion">Exportación</option>
-          <option value="nacional">Nacional</option>
-          <option value="desecho">Desecho</option>
-        </select>
-      </div>
+      
       <div class="filtro-grupo" id="fechaPersonalizada" style="display: none;">
         <label class="filtro-label">Fecha</label>
         <input type="date" class="filtro-fecha" id="fechaSeleccionada">
