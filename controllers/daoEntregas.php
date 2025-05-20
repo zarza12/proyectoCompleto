@@ -112,8 +112,8 @@ class daoEntregas {
         $conexion = getConnection();
         try {
             // Escapar el ID para prevenir inyección SQL
-            $idEntrega = $conexion->real_escape_string($idEntrega);
             
+            echo "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff  ".$idEntrega;
             $sql = "DELETE FROM entregas WHERE idEntregas = '{$idEntrega}'";
             $conexion->begin_transaction();
 
