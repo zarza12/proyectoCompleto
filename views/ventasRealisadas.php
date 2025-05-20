@@ -233,6 +233,7 @@ foreach ($listaVentas as $venta) {
     <!-- Filtros superiores -->
     <div class="filtros-contenedor">
       <div class="filtro-grupo">
+        <label class="filtro-label">Filtro</label>
         <div class="filtro-grupo">
         <label class="filtro-label">Categoría</label>
         <select id="categoriaFiltro" class="filtro-select">
@@ -242,7 +243,8 @@ foreach ($listaVentas as $venta) {
           <option value="desecho">Desecho</option>
         </select>
       </div>
-        <label class="filtro-label">Tipo de Filtro</label>
+
+
         <select id="tipoFiltro" class="filtro-select" style="display: none;">
           <option value="dia">Día</option>
           <option value="semana" selected>Semana</option>
