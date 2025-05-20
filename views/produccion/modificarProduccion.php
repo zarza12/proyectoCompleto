@@ -385,7 +385,7 @@ $sectoresJSON = json_encode($listarSectores);
                 <td><span class="estado estado-desecho">${reg.desecho}</span></td>
                 <td>
                     <button type="button" class="btn-accion btn-editar" onclick="seleccionarRegistro(${reg.id})"><i class="fas fa-pen"></i></button>
-                    <button type="button" class="btn-accion btn-eliminar" onclick="confirmarEliminar(${reg.id})"><i class="fas fa-trash"></i></button>
+                    <button type="button" class="btn-accion btn-eliminar" onclick="confirmarEliminar(${reg.id})" style="display: none;"><i class="fas fa-trash"></i></button>
                 </td>
             `;
             

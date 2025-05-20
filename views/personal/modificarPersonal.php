@@ -59,7 +59,7 @@ function lisPer($listarPersonas) {
         $html .= '<td>' . $persona->getTelefonoCelular() . '</td>'; 
         $html .= '<td>
                     <button class="btn-accion btn-editar" onclick="seleccionarRegistro(\'' . $persona->getId() . '\')"><i class="fas fa-pen"></i></button>
-                    <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                    <button class="btn-accion btn-eliminar" style="display: none;"><i class="fas fa-trash"></i></button>
                   </td>';
         $html .= '</tr>';
     }
@@ -822,7 +822,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <input type="date" id="modificarFechaNacimiento" name="modificarFechaNacimiento" class="form-input" required>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Género</label>
                             <div class="campo-contenedor">

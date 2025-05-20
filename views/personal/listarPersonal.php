@@ -52,7 +52,7 @@ function lisPer($listarPersonas) {
         $html .= '<td>' . $persona->getTelefonoCelular() . '</td>'; 
         $html .= '<td>
                     <button class="btn-accion btn-ver" onclick="seleccionarRegistro(\'' . $persona->getId() . '\')"><i class="fas fa-eye"></i></button>
-                    <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                    <button class="btn-accion btn-eliminar" style="display: none;"><i class="fas fa-trash"></i></button>
                   </td>';
         $html .= '</tr>';
     }

@@ -795,8 +795,8 @@ function cargarTabla(datos) {
             <td>
                 <div class="acciones-fila">
                     <button class="btn-accion btn-ver" onclick="verDetalles('${item.id}')"><i class="fas fa-eye"></i></button>
-                    <button class="btn-accion btn-editar"><i class="fas fa-edit"></i></button>
-                    <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+                    <button class="btn-accion btn-editar" style="display: none;"><i class="fas fa-edit"></i></button>
+                    <button class="btn-accion btn-eliminar" style="display: none;"><i class="fas fa-trash"></i></button>
                 </div>
             </td>
         `;

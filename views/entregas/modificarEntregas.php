@@ -848,7 +848,7 @@ $listarJSON = json_encode($listar);
                     <td>${entrega.transportista}</td>
                     <td>
                         <button class="btn-accion btn-editar" onclick="seleccionarRegistro('${entrega.id}')"><i class="fas fa-pen"></i></button>
-                        <button class="btn-accion btn-eliminar" onclick="confirmarEliminacion('${entrega.id}', event)"><i class="fas fa-trash"></i></button>
+                        <button class="btn-accion btn-eliminar" onclick="confirmarEliminacion('${entrega.id}', event)" style="display: none;"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 

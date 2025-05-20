@@ -777,8 +777,8 @@ $listarJSON = json_encode($listar);
                 <td>
                     <div class="acciones-fila">
                         <button class="btn-accion btn-ver" onclick="event.stopPropagation(); verDetalles('${entrega.id}')"><i class="fas fa-eye"></i></button>
-                        <button class="btn-accion btn-editar" onclick="event.stopPropagation();"><i class="fas fa-edit"></i></button>
-                        <button class="btn-accion btn-eliminar" onclick="event.stopPropagation();"><i class="fas fa-trash"></i></button>
+                        <button class="btn-accion btn-editar" onclick="event.stopPropagation();" style="display: none;"><i class="fas fa-edit"></i></button>
+                        <button class="btn-accion btn-eliminar" onclick="event.stopPropagation();" style="display: none;"><i class="fas fa-trash"></i></button>
                     </div>
                 </td>
             `;

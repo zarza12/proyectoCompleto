@@ -861,7 +861,7 @@ $listarJSON = json_encode($listar);
                     <td><span class="estado estado-${estadoAleatorio.toLowerCase()}">${estadoAleatorio}</span></td>
                     <td class="acciones">
                         <button onclick="seleccionarReceta('${id}')" class="btn-accion btn-editar" title="Editar"><i class="fas fa-pen"></i></button>
-                        <button class="btn-accion btn-eliminar" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        <button class="btn-accion btn-eliminar" title="Eliminar" style="display: none;"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 
