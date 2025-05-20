@@ -59,7 +59,7 @@ if (isset($_POST['registrarPersonal']) && $_POST['registrarPersonal'] === 'regis
     );    
     $daoPersona = new daoPersonas();
    
-        if(!$daoPersona->exitCurp($persona)){
+        if(!$daoPersona->exitCurp($curp)){
                 $registo = $daoPersona->registrarPersonas($persona);
                     
 
