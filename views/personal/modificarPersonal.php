@@ -829,7 +829,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                                 <select id="modificarGenero" name="modificarGenero" class="form-select">
                                     <option value="">Seleccione...</option>
                                     <option value="Masculino">Masculino</option>
-                                    <option value="Femenino">Femenino</option>
+                                    <option value="femenino">Femenino</option>
                                     <option value="Otro">Otro</option>
                                 </select>
                             </div>
