@@ -947,7 +947,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 document.getElementById('modificarCurp').value = personal.curp;
                 document.getElementById('modificarFechaNacimiento').value = personal.fechaNacimiento;
                 document.getElementById('modificarGenero').value = personal.genero;
-                console.log(personal.puesto);
+                console.log(personal.genero);
                 document.getElementById('modificarPuesto').value = personal.puesto;
                 document.getElementById('modificarFechaIngreso').value = personal.fechaIngreso;
                 document.getElementById('modificarEmail').value = personal.email;
