@@ -390,7 +390,10 @@ let graficoTendencia = null;
 let graficoDistribucion = null;
 let graficoPrediccion = null;
 // Datos proporcionados
-const ventasRealizadas =[
+const ventasRealizadas =<?php echo json_encode($ventasInventarioJS); ?>;
+
+
+/* [
   { fecha: '2025-04-05', exportacion: 1, nacional: 20, desecho: 133 },
   { fecha: '2025-04-04', exportacion: 200, nacional: 40, desecho: 433 },
   { fecha: '2025-04-03', exportacion: 120, nacional: 30, desecho: 13 },
