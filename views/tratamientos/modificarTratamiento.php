@@ -673,7 +673,7 @@ $listarJSON = json_encode($listar);
                 <i class="fas fa-flask icono-seccion"></i>
                 <h1>Modificar Receta de Tratamiento</h1>
             </div>
-            <div class="botones-accion">
+            <div class="botones-accion" style="display: none;">
                 <button class="btn btn-exportar"><i class="fas fa-file-export"></i> Exportar Recetas</button>
             </div>
         </div>

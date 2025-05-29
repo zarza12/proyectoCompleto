@@ -192,7 +192,7 @@ $sectoresJSON = json_encode($listarSectores);
                 <i class="fas fa-edit icono-seccion"></i>
                 <h1>Modificar Producción</h1>
             </div>
-            <div class="botones-accion">
+            <div class="botones-accion" style="display: none;">
                 <button class="btn btn-exportar"><i class="fas fa-file-export"></i> Exportar Datos</button>
             </div>
         </div>

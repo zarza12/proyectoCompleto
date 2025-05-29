@@ -643,7 +643,7 @@ $listarJSON = json_encode($listar);
                 <i class="fas fa-truck icono-seccion"></i>
                 <h1>Modificar Entregas</h1>
             </div>
-            <div class="botones-accion">
+            <div class="botones-accion" style="display: none;">
                 <button class="btn btn-exportar"><i class="fas fa-file-export"></i> Exportar Datos</button>
             </div>
         </div>

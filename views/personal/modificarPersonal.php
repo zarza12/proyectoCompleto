@@ -716,7 +716,7 @@ if (isset($_POST['modificarPersonal']) && $_POST['modificarPersonal'] === 'modif
                 <i class="fas fa-users icono-seccion"></i>
                 <h1>Modificar Personal</h1>
             </div>
-            <div class="botones-accion">
+            <div class="botones-accion" style="display: none;">
                 <button class="btn btn-exportar"><i class="fas fa-file-export"></i> Exportar Datos</button>
             </div>
         </div>
