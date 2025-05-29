@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (isset($_POST['registrarTratamiento']) && $_POST['registrarTratamiento'] === 'registrarTratamiento') {
-    echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    //echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     $fechaRegistroTratamiento = $_POST['fechaRegistroTratamiento2'];
     $sectorTratamiento        = $_POST['sectorTratamiento'];

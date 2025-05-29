@@ -415,21 +415,21 @@ $sectoresJSON = json_encode($listarSectores);
                                 <label class="etiqueta" for="calidadExportacion">
                                     <i class="fas fa-globe icono-calidad"></i> Exportación
                                 </label>
-                                <input type="number" id="calidadExportacion" name="calidadExportacion" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()">
+                                <input type="number" id="calidadExportacion" name="calidadExportacion" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()" required>
                             </div>
                             
                             <div class="item-calidad">
                                 <label class="etiqueta" for="calidadNacional">
                                     <i class="fas fa-flag icono-calidad"></i> Consumo Nacional
                                 </label>
-                                <input type="number" id="calidadNacional" name="calidadNacional" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()">
+                                <input type="number" id="calidadNacional" name="calidadNacional" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()" required>
                             </div>
                             
                             <div class="item-calidad">
                                 <label class="etiqueta" for="calidadDesecho">
                                     <i class="fas fa-trash icono-calidad"></i> Desecho
                                 </label>
-                                <input type="number" id="calidadDesecho" name="calidadDesecho" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()">
+                                <input type="number" id="calidadDesecho" name="calidadDesecho" min="0" class="campo-entrada campo-numero" placeholder="Cajas" oninput="actualizarSumaCajas()" required>
                             </div>
                         </div>
                         
