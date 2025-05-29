@@ -885,7 +885,7 @@ $htmlListado = lisPer($listarPersonas);
                     </div>
                 </div>
                 
-                <div class="info-grupo">
+                <div class="info-grupo" style="display: none;">
                     <h3 class="titulo-seccion">
                         <i class="fas fa-chart-line"></i>
                         Estadísticas
