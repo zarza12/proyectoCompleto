@@ -41,7 +41,7 @@ $listarSectores = $daoSectores2->listarSectores();
           mostrarMensaje("Ya exite ese sector");
   }
 
-
+}
 
 if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar') {
   // Recibir datos del formulario en PHP
