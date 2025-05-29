@@ -7,6 +7,8 @@ include_once  '../models/Sector.php';
 
 if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
   // Recibir datos del formulario en PHP
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectores();
 
   $nombre      = $_POST['nombreSector'];
   $descripcion = $_POST['descripcionSector'];
@@ -18,22 +20,30 @@ if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrar
   $daoSectores = new daoSector();
    
 
-  $registo = $daoSectores->registrarSector($sector);
 
-  if ($registo) {
-      echo "
-      <script>
-         
-              alert('Registro exitoso');
-              window.location.href = 'sectores.php';
+
+  if (in_array($nombre,array_column($listarSectores, 'label'),true)) {
+    $registo = $daoSectores->registrarSector($sector);
+    if ($registo) {
+        echo "
+        <script>
           
-      </script>";
+                alert('Registro exitoso');
+                window.location.href = 'sectores.php';
+            
+        </script>";
+        
+    } else {
+        mostrarMensaje("Error al insertar el registro.");
       
-  } else {
-      mostrarMensaje("Error al insertar el registro.");
-     
+    }
   }
-}
+
+  } else {
+          mostrarMensaje("Ya exite ese sector");
+  }
+
+
 
 if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar') {
   // Recibir datos del formulario en PHP
