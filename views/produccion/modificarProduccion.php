@@ -249,7 +249,7 @@ $sectoresJSON = json_encode($listarSectores);
         <div class="form-grid">
         <div class="form-group">
             <label class="form-label">Sector de Producción</label>
-            <select id="sectorModificar" name="sectorModificar" class="form-select"></select>
+            <select id="sectorModificar" name="sectorModificar" class="form-select" required></select>
         </div>
         <div class="form-group">
             <label class="form-label">Fecha de Producción</label>
@@ -261,15 +261,15 @@ $sectoresJSON = json_encode($listarSectores);
         <div class="calidad-grid">
             <div class="calidad-item">
                 <label><i class="fas fa-globe"></i> Exportación</label>
-                <input type="number" id="exportacionModificar" name="exportacionModificar" class="form-input" min="0" oninput="actualizarTotalCajas()">
+                <input type="number" id="exportacionModificar" name="exportacionModificar" class="form-input" min="0" oninput="actualizarTotalCajas()" required>
             </div>
             <div class="calidad-item">
                 <label><i class="fas fa-flag"></i> Nacional</label>
-                <input type="number" id="nacionalModificar" name="nacionalModificar" class="form-input" min="0" oninput="actualizarTotalCajas()">
+                <input type="number" id="nacionalModificar" name="nacionalModificar" class="form-input" min="0" oninput="actualizarTotalCajas()" required>
             </div>
             <div class="calidad-item">
                 <label><i class="fas fa-trash-alt"></i> Desecho</label>
-                <input type="number" id="desechoModificar" name="desechoModificar" class="form-input" min="0" oninput="actualizarTotalCajas()">
+                <input type="number" id="desechoModificar" name="desechoModificar" class="form-input" min="0" oninput="actualizarTotalCajas()" required>
             </div>
         </div>
         <div class="calidad-total">Total de cajas: <span id="totalCajasModificar">0</span></div>
