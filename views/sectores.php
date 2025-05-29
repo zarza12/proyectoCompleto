@@ -38,7 +38,14 @@ $listarSectores = $daoSectores2->listarSectores();
       
     }
   } else {
-          mostrarMensaje("Ya exite ese sector");
+          echo "
+        <script>
+          
+                alert('Ya existe');
+                window.location.href = 'sectores.php';
+            
+        </script>";
+        
   }
 
 }
