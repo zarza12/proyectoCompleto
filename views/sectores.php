@@ -22,31 +22,26 @@ $listarSectores = $daoSectores2->listarSectores();
 
 
 
-  if (in_array($nombre,array_column($listarSectores, 'label'),false)) {
+ $labels = array_column($listarSectores, 'label');
+
+if (! in_array($nombre, $labels, true)) {
+    // **no existe**: podemos registrar
     $registo = $daoSectores->registrarSector($sector);
     if ($registo) {
-        echo "
-        <script>
-          
+        echo "<script>
                 alert('Registro exitoso');
                 window.location.href = 'sectores.php';
-            
-        </script>";
-        
+              </script>";
     } else {
         mostrarMensaje("Error al insertar el registro.");
-      
     }
-  } else {
-          echo "
-        <script>
-          
-                alert('Ya existe');
-                window.location.href = 'sectores.php';
-            
-        </script>";
-        
-  }
+} else {
+    // ya existe
+    echo "<script>
+            alert('Ya existe');
+            window.location.href = 'sectores.php';
+          </script>";
+}
 
 }
 
