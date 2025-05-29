@@ -37,8 +37,6 @@ $listarSectores = $daoSectores2->listarSectores();
         mostrarMensaje("Error al insertar el registro.");
       
     }
-  }
-
   } else {
           mostrarMensaje("Ya exite ese sector");
   }
