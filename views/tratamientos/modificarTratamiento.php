@@ -930,8 +930,8 @@ $listarJSON = json_encode($listar);
             const nuevoFumigante = document.createElement('div');
             nuevoFumigante.className = 'fumigante-item';
             nuevoFumigante.innerHTML = `
-                <input type="text" name="fumigante_nombre[]" class="form-input" value="${nombre}" placeholder="Nombre del fumigante">
-                <input type="number" name="fumigante_cantidad[]" class="form-input" value="${cantidad}" placeholder="Cantidad" step="0.01" min="0">
+                <input type="text" name="fumigante_nombre[]" class="form-input" value="${nombre}" placeholder="Nombre del fumigante" required>
+                <input type="number" name="fumigante_cantidad[]" class="form-input" value="${cantidad}" placeholder="Cantidad" step="0.01" min="0" required>
                 <select class="form-select" name="fumigante_unidad[]" >
                     <option value="litros" ${unidad === 'litros' ? 'selected' : ''}>Litros</option>
                     <option value="mililitros" ${unidad === 'mililitros' ? 'selected' : ''}>Mililitros</option>
@@ -949,8 +949,8 @@ $listarJSON = json_encode($listar);
             const nuevoFumigante = document.createElement('div');
             nuevoFumigante.className = 'fumigante-item';
             nuevoFumigante.innerHTML = `
-                <input type="text" name="fumigante_nombre[]" class="form-input" placeholder="Nombre del fumigante">
-                <input type="number" name="fumigante_cantidad[]" class="form-input" placeholder="Cantidad" step="0.01" min="0">
+                <input type="text" name="fumigante_nombre[]" class="form-input" placeholder="Nombre del fumigante" required>
+                <input type="number" name="fumigante_cantidad[]" class="form-input" placeholder="Cantidad" step="0.01" min="0" required>
                 <select class="form-select" name="fumigante_unidad[]">
                     <option value="litros">Litros</option>
                     <option value="mililitros">Mililitros</option>
