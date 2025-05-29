@@ -46,6 +46,8 @@ if (! in_array($nombre, $labels, true)) {
 
 if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar') {
   // Recibir datos del formulario en PHP
+$daoSectores2 = new daoSector();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
 
   $nombre      = $_POST['nombre'];
   $descripcion = $_POST['descripcion'];
@@ -57,22 +59,32 @@ if (isset($_POST['guardarEditar']) && $_POST['guardarEditar'] === 'guardarEditar
   $sector = new Sector($editarId, $nombre, $nombreJunto, $descripcion, $fecha);
   $daoSectores = new daoSector();
    
+  
+  $labels = array_column($listarSectores, 'label');
+      if (! in_array($nombre, $labels, true)) {
 
-  $registo = $daoSectores->modificarSector($sector);
+              $registo = $daoSectores->modificarSector($sector);
 
-  if ($registo) {
-      echo "
-      <script>
-         
-              alert('Sector actualizado con éxito');
-              window.location.href = 'sectores.php';
-          
-      </script>";
-      
-  } else {
-      mostrarMensaje("Error al insertar el registro.");
-     
-  }
+              if ($registo) {
+                  echo "
+                  <script>
+                    
+                          alert('Sector actualizado con éxito');
+                          window.location.href = 'sectores.php';
+                      
+                  </script>";
+                  
+              } else {
+                  mostrarMensaje("Error al insertar el registro.");
+                
+              }
+        } else {
+          // ya existe
+          echo "<script>
+                  alert('Ya existe');
+                  window.location.href = 'sectores.php';
+                </script>";
+      }
 }
 
 
