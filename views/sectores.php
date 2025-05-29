@@ -22,7 +22,7 @@ $listarSectores = $daoSectores2->listarSectores();
 
 
 
-  if (in_array($nombre,array_column($listarSectores, 'label'),true)) {
+  if (in_array($nombre,array_column($listarSectores, 'label'),false)) {
     $registo = $daoSectores->registrarSector($sector);
     if ($registo) {
         echo "
