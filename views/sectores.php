@@ -8,7 +8,7 @@ include_once  '../models/Sector.php';
 if (isset($_POST['registrarSector']) && $_POST['registrarSector'] === 'registrarSector') {
   // Recibir datos del formulario en PHP
 $daoSectores2 = new daoSector();
-$listarSectores = $daoSectores2->listarSectores();
+$listarSectores = $daoSectores2->listarSectoresParaSelect();
 
   $nombre      = $_POST['nombreSector'];
   $descripcion = $_POST['descripcionSector'];
