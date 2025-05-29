@@ -952,7 +952,7 @@ $htmlListado = lisPer($listarPersonas);
                     </div>
                     
                     <!-- Aquí se podría agregar un mapa en una implementación real -->
-                    <div style="background-color: #f5f5f5; height: 200px; border-radius: 8px; margin-top: 20px; display: flex; align-items: center; justify-content: center; color: #888;">
+                    <div style="display: none;" style="background-color: #f5f5f5; height: 200px; border-radius: 8px; margin-top: 20px; display: flex; align-items: center; justify-content: center; color: #888;">
                         <i class="fas fa-map-marker-alt" style="font-size: 20px; margin-right: 10px;"></i> 
                         Vista de mapa no disponible
                     </div>
