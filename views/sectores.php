@@ -23,7 +23,6 @@ $listarSectores = $daoSectores2->listarSectoresParaSelect();
 
   
  $labels = array_column($listarSectores, 'label');
-echo "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh".in_array($nombre, $labels, true);
 if (! in_array($nombre, $labels, true)) {
     // **no existe**: podemos registrar
     $registo = $daoSectores->registrarSector($sector);
