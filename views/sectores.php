@@ -21,10 +21,10 @@ $listarSectores = $daoSectores2->listarSectores();
    
 
 
-
+  
  $labels = array_column($listarSectores, 'label');
-
-if (! in_array($nombre, $labels, false)) {
+echo "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh".in_array($nombre, $labels, true);
+if (! in_array($nombre, $labels, true)) {
     // **no existe**: podemos registrar
     $registo = $daoSectores->registrarSector($sector);
     if ($registo) {
